@@ -26,7 +26,6 @@ bool isAdjacent(int inputX1, int inputX2, int inputY1, int inputY2)
 	}
 }
 
-//Currently this is not doing what it should be doing- only partial initialization.
 MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindow )
 {
 	myTexture = inputTexture;
@@ -41,11 +40,8 @@ MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindo
 		Board[i].resize(BOARD_HEIGHT);
 	}
 
-
-	//listOfCountries.clear();
 	listOfCountries.resize(numberOfCountries+1);
 
-	//listOfProvinces.clear();
 	listOfProvinces.resize(numberOfProvinces+1);
 
 	return;
@@ -79,53 +75,24 @@ int MasterBoard::checkWindow()
 
 	//Incremental moves
 	/*sf::Vector2i mousePosition = sf::Mouse::getPosition(*myWindow);
-
 	if (mousePosition.x == (windowLocationX) && mousePosition.x != 0)						//If the cursor moves to the left edge of the window AND it's not at the edge of the board
 		windowLocationX--;																			//Shift the window left
-
 	if (mousePosition.x == (windowLocationX + WINDOW_WIDTH - 1) && (windowLocationX + WINDOW_WIDTH != BOARD_WIDTH))		//If the cursor moves to the right edge of the window AND it's not at the edge of the board
 		windowLocationX++;																																//Shift the window to the right
-
 	if (mousePosition.y == windowLocationY && mousePosition.y != 0)						//If the cursor moves to the top edge of the window AND it's not at the edge of the board
 		windowLocationY--;																//Shift the window up.
-
 	if ( mousePosition.y == (windowLocationY + WINDOW_HEIGHT - 1) && (windowLocationY + WINDOW_HEIGHT != BOARD_HEIGHT))				//If the cursor moves to the bottom of the window AND it's not at the bottom of the board
 		windowLocationY++;																														//Shift the window down once.
-
 		*/
 
 	return 0;
 }
 
-
-
-
-//This is relatively well tuned.
-//Can tune by adjusting incoherenceFactor -small effect until noted and the big effect
-//Supercontinentweight - 3-5 rec'd.
-//Main island number of points, and standard deviation.
-//Outlying island (#'s), as well as number of points, and standard deviation.
-
-
-// Three characteristics of coherent noise according to libnoise:
-//   1. Passing in the same input value will always return the same output value.
-//   2. A small change in the input value will produce a small change in the output value.
-//   3. A large change in the input value will produce a random change in the output value.
-
-//randwalkArray will go from -99 to 99
-//Initial inputs are from -10 to 10.
-//Each element adds its value to the previous value.
-
-
-
-//Countries:
-//Start with array of ten strength values.
-//Uniform distribution of small to large strength values. StrengthNumber  = rand() % 10
-//Each country has random center.
-//Apply normal distribution of strength values with mean at center, and stdDev = StrengthNumber / 2
-//Number of points = StrengthNumber * total Area.
-
-
+//Generates a map by creating a 2D normal distribution and adding to an random-walk-esque 2D heightmap, which provides some element of coherent noise. 
+//This provides an elevation map that is pseudo-coherent but also roughly centered on the center of the map, with additional outlying islands also thrown in.
+//The province map is a set of randomly centered 2D normal distributions that determine control of individual tiles.
+//These tiles are then checked to ensure they're contiguous with the rest of the province.
+//Each province is then randomly assigned to a country.
 int MasterBoard::generateMap()
 {
 	std::ofstream myfile;
@@ -157,9 +124,7 @@ int MasterBoard::generateMap()
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			//Resize and reset province control points
-			Board[x][y].provinceControlPoints.resize(numberOfProvinces + 2);
-			for (int z = 1; z < numberOfProvinces + 1; z++)
-				Board[x][y].provinceControlPoints[z] = 0;
+			Board[x][y].provinceControlPoints.resize(numberOfProvinces + 1, 0 );
 		}
 	}
 
@@ -265,8 +230,8 @@ int MasterBoard::generateMap()
 				randwalkArray[i][y] = 99;
 		}
 
-	//After "normalization:"
-
+	//Combine normal array and random walk array for final elevation map.
+	//Determine tile symbols based on elevation.
 	for (int i = 0; i < BOARD_WIDTH; i++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
@@ -285,10 +250,8 @@ int MasterBoard::generateMap()
 		}
 	}
 
-
 	//Find random centers for X provinces.
-
-	//Be aware it starts at 1 - 0 means no country owner.
+	//Starting at i = 1 because provinve 0 is the neutral province.
 	for (int i = 1; i < numberOfProvinces + 1; i++)
 	{
 		double centerX = rand() % BOARD_WIDTH;
@@ -307,10 +270,10 @@ int MasterBoard::generateMap()
 			if (x > 0 && y > 0 && x < BOARD_WIDTH   && y < BOARD_HEIGHT  )
 				Board[x][y].provinceControlPoints[i]++;
 		}
-
 	}
 
-	//Create provinces
+	//Assign each square on the map a winning province based on who got more control points.
+	//Must be land square.
 	for (int x = 0; x < BOARD_WIDTH; x++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
@@ -333,7 +296,8 @@ int MasterBoard::generateMap()
 	}
 
 
-	//Ensure good neighbor connections for mostly (contiguous) provinces.
+	//Crude attempt to make all tiles within a province contiguous.
+	//In the future checkNeighbors will be recursive and actally ensure the province is all one unit.
 	for (int x = 0; x < BOARD_WIDTH; x++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
@@ -353,7 +317,6 @@ int MasterBoard::generateMap()
 	}
 
 	//Assign provinces randomly to countries
-
 	for (int i = 1; i < numberOfProvinces + 1; i++) 
 	{
 		int winnerCountry = 1 + rand() % numberOfCountries;
@@ -361,14 +324,12 @@ int MasterBoard::generateMap()
 		listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
 		
 		//Assign new controller to each tile in province.
-		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 
+		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
 		{
 			Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].controller = winnerCountry;
 		}
 	
 	}
-
-
 
 	generateNames();
 
@@ -604,7 +565,7 @@ int MasterBoard::generatePrecipAndTemp()
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			normalPrecipArray[x][y] -= (meanX / 2 + meanY / 2); //This is the "normalization" so the array doesn't JUST increase values
-			Board[x][y].precipitation = normalPrecipArray[x][y];
+			Board[x][y].precipitation = 2*normalPrecipArray[x][y];
 		}
 		std::cout << std::endl;
 	}
@@ -626,51 +587,52 @@ int MasterBoard::generatePrecipAndTemp()
 
 
 
-//Checks each neighbor and if none of them have the same control number (Or is sea tile), sets to a random neighbor.
+//Checks each neighbor. If not one of them either has the same province number or is a sea tile, the tile in question is assigned to one of its neighbor's provinces.
 bool MasterBoard::checkNeighbors(int x, int y)
 {
-	bool anyNeighboringSameProvince = false;
+	bool isolatedTile = true;
 
-	if (x > 0 && Board[x - 1][y].province == Board[x][y].province)//Any neighbors same province?
+	if (x > 0 && Board[x - 1][y].province == Board[x][y].province)	//Any neighbors same province?
 	{
-		anyNeighboringSameProvince = true;
+		isolatedTile = false;
 	}
-	if (y > 0 && Board[x ][y - 1].province == Board[x][y].province)//Any neighbors same province?
+	if (y > 0 && Board[x ][y - 1].province == Board[x][y].province)
 	{
-		anyNeighboringSameProvince = true;
+		isolatedTile = false;
 	}
-	if (x < BOARD_WIDTH - 1 && Board[x + 1][y].province == Board[x][y].province)//Any neighbors same province?
+	if (x < BOARD_WIDTH - 1 && Board[x + 1][y].province == Board[x][y].province)
 	{
-		anyNeighboringSameProvince = true;
+		isolatedTile = false;
 	}
-	if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province == Board[x][y].province)//Any neighbors same province?
+	if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province == Board[x][y].province)
 	{
-		anyNeighboringSameProvince = true;
+		isolatedTile = false;
 	}
 
 
-		if (anyNeighboringSameProvince == false )
+	//In future this will assign the province of a random valid neighboring square, but for now it simply goes in order and assigns the province of the first valid neighboring square.
+	if (isolatedTile == true )
+	{
+		
+	if (x > 0 && Board[x - 1][y].province != 0)
+	{
+		Board[x][y].province = Board[x - 1][y].province;
+	}
+	else
+		if (y>0 && Board[x ][y - 1].province != 0)
 		{
-			
-			if (x > 0 && Board[x - 1][y].province != 0)
+			Board[x][y].province = Board[x][y - 1].province ;
+		}
+		else
+			if (x < BOARD_WIDTH - 1 && Board[x + 1][y ].province != 0)
 			{
-				Board[x - 1][y].province = Board[x][y].province;
+				Board[x][y].province = Board[x + 1][y].province ;
 			}
 			else
-				if (y>0 && Board[x ][y - 1].province != 0)
+				if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province != 0)
 				{
-					Board[x][y - 1].province = Board[x][y].province;
+					Board[x][y].province = Board[x][y + 1].province;
 				}
-				else
-					if (x < BOARD_WIDTH - 1 && Board[x + 1][y ].province != 0)
-					{
-						Board[x + 1][y].province = Board[x][y].province;
-					}
-					else
-						if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province != 0)
-						{
-							Board[x][y + 1].province = Board[x][y].province;
-						}
-		}
+	}
 		return true;
 }

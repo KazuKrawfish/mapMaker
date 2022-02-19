@@ -90,6 +90,12 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 				InputLayer->viewStatus = temperatureView;
 
 			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+			{
+
+				InputLayer->viewStatus = precipitationView;
+
+			}
 
 			boardToPlay->checkWindow();
 

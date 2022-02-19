@@ -59,6 +59,7 @@ public:
 	int menuLineTracker = 0;
 	std::vector <sf::Color> politicalColors;
 	std::vector <sf::Color> temperatureColors;
+	std::vector <sf::Color> precipColors;
 	//SFML Objects end	/////////////////////////
 
 

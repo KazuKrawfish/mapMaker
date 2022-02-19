@@ -139,7 +139,7 @@ public:
 			textureRectAnchorX = 12;
 			textureRectAnchorY = 0;
 
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
+
 			
 			break;
 		}
@@ -160,7 +160,7 @@ public:
 			textureRectAnchorX = 7;
 			textureRectAnchorY = 0;
 			
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
+	
 			
 			break;
 		}
@@ -172,7 +172,7 @@ public:
 			textureRectAnchorX = 17;
 			textureRectAnchorY = 0;
 
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
+
 			
 			
 			break;
@@ -185,7 +185,6 @@ public:
 			textureRectAnchorX = 22;
 			textureRectAnchorY = 0;
 
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
 			
 			break;
 		}
@@ -264,7 +263,7 @@ public:
 			textureRectAnchorX = 32	;
 			textureRectAnchorY = 0;
 
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
+		
 			
 
 			production = 1000;
@@ -278,7 +277,7 @@ public:
 			textureRectAnchorX = 27;
 			textureRectAnchorY = 0;
 
-			mySprite.setTextureRect(rectArray[textureRectAnchorX + controller][textureRectAnchorY]);
+
 		
 
 			production = 1000;

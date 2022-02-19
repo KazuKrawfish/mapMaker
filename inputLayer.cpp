@@ -19,12 +19,18 @@ inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::
 
 	politicalColors.resize(numberOfCountries + 1);
 	temperatureColors.resize(4);
+	precipColors.resize(4);
 
 	temperatureColors[0] = sf::Color::Cyan;
 	temperatureColors[1] = sf::Color::Yellow;
 	temperatureColors[2].r = 250;	//Orange
 	temperatureColors[2].g = 150;
 	temperatureColors[3] = sf::Color::Red;
+
+	precipColors[0] = sf::Color::Yellow;
+	precipColors[1] = sf::Color::Green;
+	precipColors[2] = sf::Color::Cyan;
+	precipColors[3] = sf::Color::Blue;
 
 	politicalColors[1] = sf::Color::Red;
 	politicalColors[2] = sf::Color::Green;
@@ -59,25 +65,25 @@ inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::
 int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actualY, MasterBoard* boardToPrint, bool withinAnimation)
 {
 	tile* tileToPrint = &boardToPrint->Board[actualX][actualY];
-	//Initialize effects sprite, even though it may not always be used.
-	sf::Sprite effectsSprite;
-	effectsSprite.setTexture(*inputLayerTexture);
-	effectsSprite.setPosition(screenX * 50, screenY * 50);
 
 	//First print tile.
-	//Change color of tile if political view is on
+	//Change color of tile if political view is on.
 	if (viewStatus == politicalView && tileToPrint->controller != 0)
 	{
-		sf::Sprite throwAway = tileToPrint->mySprite;
-		throwAway.setPosition(screenX * 50, screenY * 50);
-		throwAway.setColor(politicalColors[tileToPrint->controller]);
-		inputLayerWindow->draw(throwAway);
+		//Use local sprite to avoid changing the actual sprite's color.
+		sf::Sprite politicalColorSprite = tileToPrint->mySprite;
+		politicalColorSprite.setPosition(screenX * 50, screenY * 50);
+		politicalColorSprite.setColor(politicalColors[tileToPrint->controller]);
+		inputLayerWindow->draw(politicalColorSprite);
+		
 	}
-	else 
+	else //If temperatureView is on, print special blank tile with that color assigned.
 		if (viewStatus == temperatureView) 
 		{
-			sf::Sprite throwAway = tileToPrint->mySprite;
-			throwAway.setPosition(screenX * 50, screenY * 50);
+			//Use local sprite to avoid changing the actual sprite's color.
+			sf::Sprite temperatureColorSprite = tileToPrint->mySprite;
+			temperatureColorSprite.setTextureRect(rectArray[5][0]);
+			temperatureColorSprite.setPosition(screenX * 50, screenY * 50);
 			int tempColor = 0;
 			if (tileToPrint->temperature < -20)
 				tempColor = 0;
@@ -87,11 +93,30 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 				tempColor = 2;
 			else
 				tempColor = 3;
-			throwAway.setColor(temperatureColors[tempColor]);
-			inputLayerWindow->draw(throwAway);
+			temperatureColorSprite.setColor(temperatureColors[tempColor]);
+			inputLayerWindow->draw(temperatureColorSprite);
 		}
 		else
+		if (viewStatus == precipitationView)
 		{
+			//Use local sprite to avoid changing the actual sprite's color.
+			sf::Sprite precipColorSprite = tileToPrint->mySprite;
+			precipColorSprite.setTextureRect(rectArray[5][0]);
+			precipColorSprite.setPosition(screenX * 50, screenY * 50);
+			int precipColor = 0;
+			if (tileToPrint->precipitation < -20)
+				precipColor = 0;
+			else if (tileToPrint->precipitation < 10)
+				precipColor = 1;
+			else if (tileToPrint->precipitation < 50)
+				precipColor = 2;
+			else
+				precipColor = 3;
+			precipColorSprite.setColor(precipColors[precipColor]);
+			inputLayerWindow->draw(precipColorSprite);
+		}
+		else	//If default view, print the normal sprite.
+		{	
 			tileToPrint->mySprite.setPosition(screenX * 50, screenY * 50);
 			inputLayerWindow->draw(tileToPrint->mySprite);
 		}
@@ -157,8 +182,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 			inputLayerWindow->draw(beachSprite);
 		}
 	}
-	   	 
-
+	   	
 	//If controlled by a country draw any borders with other countries
 	if (viewStatus == defaultView && tileToPrint->symbol != '~' && tileToPrint->controller != 0) 
 	{
@@ -204,17 +228,12 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		}
 	}
 	
-
-
-
 	if (tileToPrint->animationSprite != NULL)
 	{
 		//If there is some additional animation, print that too, on top of everything else
 		//It must be set by previous function
 		tileToPrint->animationSprite->setPosition(screenX * 50, screenY * 50);
 		inputLayerWindow->draw(*(tileToPrint->animationSprite));
-
-
 	}
 
 	return 1;
