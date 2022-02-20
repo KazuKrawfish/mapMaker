@@ -1,31 +1,20 @@
-﻿  MasterBoard.cpp
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(146,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(156,9): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(157,9): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(175,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(176,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(189,48): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(189,48): warning C4244:         with
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(189,48): warning C4244:         [
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(189,48): warning C4244:             _Ty=int
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(189,48): warning C4244:         ]
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(268,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(269,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(327,21): warning C4018:  '<': signed/unsigned mismatch
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(378,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(499,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(513,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(537,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(538,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(553,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(567,54): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(567,54): warning C4244:         with
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(567,54): warning C4244:         [
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(567,54): warning C4244:             _Ty=int
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(567,54): warning C4244:         ]
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(578,52): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(578,52): warning C4244:         with
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(578,52): warning C4244:         [
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(578,52): warning C4244:             _Ty=int
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(578,52): warning C4244:         ]
+﻿  inputLayer.cpp
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(93,65): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(93,44): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(104,68): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(104,47): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(123,63): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(123,42): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(138,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(138,46): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(147,56): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(147,35): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(178,56): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(178,35): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(209,57): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(209,36): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(253,74): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(253,53): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(301,97): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(301,50): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
   mapMaker.vcxproj -> C:\Users\Cazimir Park\source\repos\mapMaker\Debug\mapMaker.exe

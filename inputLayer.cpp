@@ -60,6 +60,12 @@ inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::
 
 		}
 	}
+	//Increase transparency for political colors so we can highlight tiles
+	for (int i = 1; i < numberOfCountries + 1; i++) 
+	{
+		politicalColors[i].a = 160;
+	}
+
 }
 
 int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actualY, MasterBoard* boardToPrint, bool withinAnimation)
@@ -71,8 +77,20 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 	if (viewStatus == politicalView && tileToPrint->controller != 0)
 	{
 		//Use local sprite to avoid changing the actual sprite's color.
+		
+		//First print a very faint image of the terrain
+		//Must have lower alpha for transparency
 		sf::Sprite politicalColorSprite = tileToPrint->mySprite;
-		politicalColorSprite.setPosition(screenX * 50, screenY * 50);
+		sf::Color transparentColor;
+		transparentColor = politicalColorSprite.getColor();
+		transparentColor.a = 100;				
+		politicalColorSprite.setColor(transparentColor);
+		inputLayerWindow->draw(politicalColorSprite);
+
+		//Then print color over it
+		politicalColorSprite = tileToPrint->mySprite;
+		politicalColorSprite.setTextureRect(rectArray[5][0]);
+		politicalColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 		politicalColorSprite.setColor(politicalColors[tileToPrint->controller]);
 		inputLayerWindow->draw(politicalColorSprite);
 		
@@ -83,13 +101,13 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 			//Use local sprite to avoid changing the actual sprite's color.
 			sf::Sprite temperatureColorSprite = tileToPrint->mySprite;
 			temperatureColorSprite.setTextureRect(rectArray[5][0]);
-			temperatureColorSprite.setPosition(screenX * 50, screenY * 50);
+			temperatureColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 			int tempColor = 0;
 			if (tileToPrint->temperature < -20)
 				tempColor = 0;
 			else if (tileToPrint->temperature < 10)
 				tempColor = 1;
-			else if (tileToPrint->temperature < 50)
+			else if (tileToPrint->temperature < 51)
 				tempColor = 2;
 			else
 				tempColor = 3;
@@ -102,13 +120,13 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 			//Use local sprite to avoid changing the actual sprite's color.
 			sf::Sprite precipColorSprite = tileToPrint->mySprite;
 			precipColorSprite.setTextureRect(rectArray[5][0]);
-			precipColorSprite.setPosition(screenX * 50, screenY * 50);
+			precipColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 			int precipColor = 0;
 			if (tileToPrint->precipitation < -20)
 				precipColor = 0;
 			else if (tileToPrint->precipitation < 10)
 				precipColor = 1;
-			else if (tileToPrint->precipitation < 50)
+			else if (tileToPrint->precipitation < 51)
 				precipColor = 2;
 			else
 				precipColor = 3;
@@ -117,7 +135,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		}
 		else	//If default view, print the normal sprite.
 		{	
-			tileToPrint->mySprite.setPosition(screenX * 50, screenY * 50);
+			tileToPrint->mySprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 			inputLayerWindow->draw(tileToPrint->mySprite);
 		}
 
@@ -126,7 +144,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 	{
 		sf::Sprite riverSprite;
 		riverSprite.setTexture(*inputLayerTexture);
-		riverSprite.setPosition(screenX * 50, screenY * 50);
+		riverSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 
 		int riverYCoord = 9;
 
@@ -157,7 +175,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 	{
 		sf::Sprite beachSprite;
 		beachSprite.setTexture(*inputLayerTexture);
-		beachSprite.setPosition(screenX * 50, screenY * 50);
+		beachSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 
 		int beachYCoord = 11;
 
@@ -188,7 +206,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 	{
 		sf::Sprite borderSprite;
 		borderSprite.setTexture(*inputLayerTexture);
-		borderSprite.setPosition(screenX * 50, screenY * 50);
+		borderSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 
 		borderSprite.setColor(politicalColors[tileToPrint->controller]);
 
@@ -232,7 +250,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 	{
 		//If there is some additional animation, print that too, on top of everything else
 		//It must be set by previous function
-		tileToPrint->animationSprite->setPosition(screenX * 50, screenY * 50);
+		tileToPrint->animationSprite->setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 		inputLayerWindow->draw(*(tileToPrint->animationSprite));
 	}
 
@@ -243,11 +261,11 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 {
 	sf::Vector2i mousePosition = sf::Mouse::getPosition(*inputLayerWindow);
 
-	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * 50 && mousePosition.y < boardToPrint->WINDOW_HEIGHT * 50)
+	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * TILE_SIZE && mousePosition.y < boardToPrint->WINDOW_HEIGHT * TILE_SIZE)
 	{
 		//Description and Owner///////
-		int myController = boardToPrint->Board[mousePosition.x / 50][mousePosition.y / 50].controller;
-		int myProvince = boardToPrint->Board[mousePosition.x / 50][mousePosition.y / 50].province;
+		int myController = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].controller;
+		int myProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
 				
 		std::string myControllerName = "Neutral";		
 		
@@ -264,7 +282,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Description and Owner//////
 
 		//ELEVATION//////////////////
-		int elevation = boardToPrint->Board[mousePosition.x / 50][mousePosition.y / 50].elevation;
+		int elevation = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].elevation;
 		snprintf(buffer,100, "\nElevation: %d", elevation);
 		///	tileDescription += '\n';
 		//tileDescription += "Elevation: ";
@@ -272,8 +290,8 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//ELEVATION//////////////////
 
 		//Precip/Temp////////////////
-		int precip = boardToPrint->Board[mousePosition.x / 50][mousePosition.y / 50].precipitation;
-		int temp = boardToPrint->Board[mousePosition.x / 50][mousePosition.y / 50].temperature;
+		int precip = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].precipitation;
+		int temp = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].temperature;
 		snprintf(buffer, 100, "\nTemperature: %d\nPrecipitation: %d\n", temp, precip);
 		tileDescription += buffer;
 		//Precip/Temp////////////////

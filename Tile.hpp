@@ -118,6 +118,28 @@ public:
 		mySprite.setTexture(*myTexture);
 		
 
+		//New tiles
+		int weatherType = 0;	//Temperate
+
+		if (temperature < -20) //Arctic
+		{
+			weatherType = 3;
+		}
+		if (temperature >= 10 && precipitation >= 10)	//Jungle
+		{
+			weatherType = 1;
+		}
+		if (temperature >= 10 && precipitation < 10)	//Desert
+		{	
+			weatherType = 2;
+		}
+
+		//Switch plains to forest
+		if (precipitation > 10 && symbol == '.')
+		{
+			symbol = '+';
+		}
+
 		//Sprite had defualt texture-rect set in the constructor
 		
 		switch (symbol)
@@ -126,7 +148,7 @@ public:
 		{	
 			description = "Clear terrain.";
 		
-			mySprite.setTextureRect(rectArray[0][0]);
+			mySprite.setTextureRect(rectArray[0][weatherType]);
 		
 			break;
 		}
@@ -207,7 +229,7 @@ public:
 		{
 			description = "Hill.";
 			
-			mySprite.setTextureRect(rectArray[2][0]);
+			mySprite.setTextureRect(rectArray[2][weatherType]);
 			
 			break;
 		}
@@ -215,7 +237,7 @@ public:
 		{
 			description = "Mountain.";
 	
-			mySprite.setTextureRect(rectArray[3][0]);
+			mySprite.setTextureRect(rectArray[3][weatherType]);
 			
 			break;
 		}
@@ -223,7 +245,7 @@ public:
 		{
 			description = "Forest.";
 			
-			mySprite.setTextureRect(rectArray[1][0]);
+			mySprite.setTextureRect(rectArray[1][weatherType]);
 			
 			break;
 		}

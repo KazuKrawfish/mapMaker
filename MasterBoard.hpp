@@ -19,9 +19,10 @@ class inputLayer;
 const int MAX_WINDOW_HEIGHT = 14;
 const int MAX_WINDOW_WIDTH = 16;
 
-
 const int numberOfCountries = 10;
 const int numberOfProvinces = 20;
+
+const int TILE_SIZE = 50;
 
 struct xyCoord 
 {
