@@ -89,7 +89,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 
 		//Then print color over it
 		politicalColorSprite = tileToPrint->mySprite;
-		politicalColorSprite.setTextureRect(rectArray[5][0]);
+		politicalColorSprite.setTextureRect(rectArray[7][0]);
 		politicalColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 		politicalColorSprite.setColor(politicalColors[tileToPrint->controller]);
 		inputLayerWindow->draw(politicalColorSprite);
@@ -100,7 +100,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		{
 			//Use local sprite to avoid changing the actual sprite's color.
 			sf::Sprite temperatureColorSprite = tileToPrint->mySprite;
-			temperatureColorSprite.setTextureRect(rectArray[5][0]);
+			temperatureColorSprite.setTextureRect(rectArray[7][0]);
 			temperatureColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 			int tempColor = 0;
 			if (tileToPrint->temperature < -20)
@@ -119,7 +119,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		{
 			//Use local sprite to avoid changing the actual sprite's color.
 			sf::Sprite precipColorSprite = tileToPrint->mySprite;
-			precipColorSprite.setTextureRect(rectArray[5][0]);
+			precipColorSprite.setTextureRect(rectArray[7][0]);
 			precipColorSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
 			int precipColor = 0;
 			if (tileToPrint->precipitation < -20)
@@ -139,70 +139,9 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 			inputLayerWindow->draw(tileToPrint->mySprite);
 		}
 
-	//Now handle river tiles onto sea and beach
-	if (tileToPrint->symbol == '~' || tileToPrint->symbol == '*') 
-	{
-		sf::Sprite riverSprite;
-		riverSprite.setTexture(*inputLayerTexture);
-		riverSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
-
-		int riverYCoord = 9;
-
-		if (actualX < boardToPrint->BOARD_WIDTH - 1 &&  boardToPrint->Board[actualX+1][actualY].symbol == '-') 
-		{
-			riverSprite.setTextureRect(rectArray[16][riverYCoord]);
-			inputLayerWindow->draw(riverSprite);
-		}
-		if (actualY < boardToPrint->BOARD_HEIGHT - 1 && boardToPrint->Board[actualX ][actualY+1].symbol == '-')
-		{
-			riverSprite.setTextureRect(rectArray[18][riverYCoord]);
- 			inputLayerWindow->draw(riverSprite);
-		}
-		if (actualY > 0 && boardToPrint->Board[actualX][actualY - 1].symbol == '-')
-		{
-			riverSprite.setTextureRect(rectArray[19][riverYCoord]);
-			inputLayerWindow->draw(riverSprite);
-		}
-		if (actualX > 0 && boardToPrint->Board[actualX - 1][actualY].symbol == '-')
-		{
-			riverSprite.setTextureRect(rectArray[17][riverYCoord]);
-			inputLayerWindow->draw(riverSprite);
-		}
-	}
-
-	//Now handle shoal onto sea
-	if (tileToPrint->symbol == '~')
-	{
-		sf::Sprite beachSprite;
-		beachSprite.setTexture(*inputLayerTexture);
-		beachSprite.setPosition(screenX * TILE_SIZE, screenY * TILE_SIZE);
-
-		int beachYCoord = 11;
-
-		if (actualX < boardToPrint->BOARD_WIDTH - 1 && boardToPrint->Board[actualX + 1][actualY].symbol == '*')
-		{
-			beachSprite.setTextureRect(rectArray[16][beachYCoord]);
-			inputLayerWindow->draw(beachSprite);
-		}
-		if (actualY < boardToPrint->BOARD_HEIGHT - 1 && boardToPrint->Board[actualX][actualY + 1].symbol == '*')
-		{
-			beachSprite.setTextureRect(rectArray[18][beachYCoord]);
-			inputLayerWindow->draw(beachSprite);
-		}
-		if (actualY > 0 && boardToPrint->Board[actualX][actualY - 1].symbol == '*')
-		{
-			beachSprite.setTextureRect(rectArray[19][beachYCoord]);
-			inputLayerWindow->draw(beachSprite);
-		}
-		if (actualX > 0 && boardToPrint->Board[actualX - 1][actualY].symbol == '*')
-		{
-			beachSprite.setTextureRect(rectArray[17][beachYCoord]);
-			inputLayerWindow->draw(beachSprite);
-		}
-	}
 	   	
 	//If controlled by a country draw any borders with other countries
-	if (viewStatus == defaultView && tileToPrint->symbol != '~' && tileToPrint->controller != 0) 
+	if (viewStatus == defaultView && tileToPrint->terrain != sea && tileToPrint->controller != 0) 
 	{
 		sf::Sprite borderSprite;
 		borderSprite.setTexture(*inputLayerTexture);
@@ -215,7 +154,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 			&& boardToPrint->Board[actualX + 1][actualY].controller != tileToPrint->controller)
 		{
 			//Draw  border if neighbor is non-neutral and not friendly
-			borderSprite.setTextureRect(rectArray[27][4]);
+			borderSprite.setTextureRect(rectArray[11][0]);
 			inputLayerWindow->draw(borderSprite);
 			
 		}
@@ -223,7 +162,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		if (actualY < boardToPrint->BOARD_HEIGHT - 1 /*&& boardToPrint->Board[actualX ][actualY + 1].controller != 0*/
 			&& boardToPrint->Board[actualX ][actualY + 1].controller != tileToPrint->controller)
 		{
-			borderSprite.setTextureRect(rectArray[26][4]);
+			borderSprite.setTextureRect(rectArray[10][0]);
 			inputLayerWindow->draw(borderSprite);
 
 		}
@@ -231,7 +170,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		if (actualX > 0 /*&& boardToPrint->Board[actualX- 1][actualY ].controller != 0*/
 			&& boardToPrint->Board[actualX- 1][actualY].controller != tileToPrint->controller)
 		{
-			borderSprite.setTextureRect(rectArray[24][4]);
+			borderSprite.setTextureRect(rectArray[8][0]);
 
 			inputLayerWindow->draw(borderSprite);
 
@@ -240,7 +179,7 @@ int inputLayer::printSingleTile(int screenX, int screenY, int actualX, int actua
 		if (actualY > 0 /*&& boardToPrint->Board[actualX ][actualY - 1].controller != 0 */
 			&& boardToPrint->Board[actualX ][actualY - 1].controller != tileToPrint->controller)
 		{
-			borderSprite.setTextureRect(rectArray[25][4]);
+			borderSprite.setTextureRect(rectArray[9][0]);
 			inputLayerWindow->draw(borderSprite);
 
 		}
@@ -266,18 +205,19 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Description and Owner///////
 		int myController = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].controller;
 		int myProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
+		
 				
 		std::string myControllerName = "Neutral";		
 		
 		if (myController != 0)
 			myControllerName = boardToPrint->listOfCountries[myController].name;
-		
+
 		std::string nameOfProvince = "";
 		if (myProvince != 0)
 			nameOfProvince = boardToPrint->listOfProvinces[myProvince].name;
 
 		char buffer[100];
-		snprintf(buffer, 100, "%s Province(%d)\nController: %s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
+		snprintf(buffer, 100, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
 		std::string tileDescription = buffer;
 		//Description and Owner//////
 
@@ -292,7 +232,10 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Precip/Temp////////////////
 		int precip = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].precipitation;
 		int temp = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].temperature;
-		snprintf(buffer, 100, "\nTemperature: %d\nPrecipitation: %d\n", temp, precip);
+		int population = boardToPrint->listOfProvinces[myProvince].Population;
+		int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation ;
+		std::string terrainDescription = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].description;
+		snprintf(buffer, 100, "\nTemperature: %d\nPrecipitation: %d\n%s\nPopulation:\n%d\nNational Population:\n%d", temp, precip, terrainDescription.c_str(), population, nationalPopulation);
 		tileDescription += buffer;
 		//Precip/Temp////////////////
 			
@@ -336,16 +279,76 @@ int inputLayer::printUpperScreen(MasterBoard* boardToPrint, bool withinAnimation
 
 int inputLayer::printScreen(MasterBoard* boardToPrint, bool withinAnimation)
 {
-
 	inputLayerWindow->clear();
-	printUpperScreen(boardToPrint, withinAnimation);
-	printLowerScreen(boardToPrint);
-	inputLayerWindow->display();
-	
 
+	if (screen == gameBoardScreen)
+	{
+		printUpperScreen(boardToPrint, withinAnimation);
+		printLowerScreen(boardToPrint);
+	}
+	else if (screen == dataScreen) 
+	{
+		printDataScreen(boardToPrint);
+	}
+
+	inputLayerWindow->display();
 	
 	//Reset line tracker after each print.
 	menuLineTracker = 0;
 	
+	return 0;
+}
+
+int inputLayer::selectProvince(MasterBoard* boardToPrint) 
+{
+	sf::Vector2i mousePosition = sf::Mouse::getPosition(*inputLayerWindow);
+
+	//If mouse is within board
+	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * TILE_SIZE && mousePosition.y < boardToPrint->WINDOW_HEIGHT * TILE_SIZE)
+	{
+		//Description and Owner///////
+		selectedProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
+	}
+
+	//Must have selected an actual province
+	if (selectedProvince > 0)
+		return 0;
+	else return 1;
+
+
+}
+
+int inputLayer::printDataScreen(MasterBoard* boardToPrint) 
+{
+	//Description and Owner///////
+
+
+	int myController = boardToPrint->listOfProvinces[selectedProvince].controller;
+
+	std::string provinceDescription = "";
+	std::string nameOfProvince = "";
+	std::string myControllerName = "";
+
+	if (myController != 0)
+		myControllerName = boardToPrint->listOfCountries[myController].name ;
+
+	if (selectedProvince != 0)
+		nameOfProvince = boardToPrint->listOfProvinces[selectedProvince].name;
+
+	char buffer[100];
+	snprintf(buffer, 100, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
+	provinceDescription += buffer;
+
+
+	int population = boardToPrint->listOfProvinces[selectedProvince].Population;
+	int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation;
+	snprintf(buffer, 100, "\nPopulation:\n%d\nNational Population:\n%d", population, nationalPopulation);
+	provinceDescription += buffer;
+
+	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);
+
+	newText.setPosition(10, 10);
+	inputLayerWindow->draw(newText);
+
 	return 0;
 }

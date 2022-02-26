@@ -8,8 +8,8 @@
 
 class MasterBoard;
 
-enum gameInputLayer { defaultView, politicalView, temperatureView, precipitationView};
-enum specialKey {showMinions, hideMinions};
+enum gameInputLayer { defaultView, politicalView, temperatureView, precipitationView };
+enum screenType { gameBoardScreen, dataScreen };
 enum colorCode {
 	unused, fogLandTile, waterTile, fogWaterTile, player1Minion,
 	player2Minion, player3Minion, player4Minion, player5Minion, player6Minion,
@@ -35,19 +35,17 @@ public:
 	int printScreen(MasterBoard* boardToPrint, bool withinAnimation);
 	int printSingleTile(int screenX, int screenY, int actualX, int actualY, MasterBoard* boardToPrint, bool withinAnimation);
 
+	//Province and status ///////////////////////////
+	int selectProvince(MasterBoard* boardToPrint);
+	int printDataScreen(MasterBoard* boardToPrint);
+	int selectedProvince = 0;
+	//Province and status ///////////////////////////
+
 	std::string eventText = "";
 
 	gameInputLayer viewStatus = defaultView;
+	screenType screen = gameBoardScreen;
 	mainMenu* MainMenu;
-
-	//MenuCrawlerObjects /////////////////////////
-	int menuCursor = 0;
-	std::vector <std::string> menuOptions { "End Turn","Save Game","Main Menu","Load Game","Restart Map","Return to Game"	};
-	std::vector <std::string> factoryOptions{ "Infantry\t1000", "Specialist\t3000", "Cavalry\t4000","APC\t5000","Artillery\t6000", "Armor\t7000",
-												"Anti-Aircraft\t8000", "Rocket Artillery\t15000", "Heavy Armor\t16000" };
-	std::vector <std::string> airbaseOptions{ "Transport Copter\t5000", "Attack Copter\t9000", "Interceptor\t15000", "Bomber\t18000"};
-	std::vector <std::string> portOptions{ "Gunboat\t6000", "Cruiser\t14000", "Landing Ship\t12000", "Submarine\t18000", "Battleship\t25000", "Aircraft Carrier\t25000" };
-	//MenuCrawlerObjects /////////////////////////
 
 	//SFML Objects		/////////////////////////
 	std::vector <sf::Sound> * soundEffects;

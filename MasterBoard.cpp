@@ -1,7 +1,3 @@
-//Needs masterboard to contain a new pathMap called targetingPathMap, to use for compie.
-//Tile also needs to update withinVision[playerFlag][] to an array, to handle vision changes for all units.
-
-
 #include "MasterBoard.hpp"
 #include <string>
 #include <iostream>
@@ -11,29 +7,13 @@
 #include <iostream>
 #include <fstream>
 
-//If the two input coordinates are next to each other, return true. Otherwise, return false.
-//This can be either horizontal or vertical adjacency.
-bool isAdjacent(int inputX1, int inputX2, int inputY1, int inputY2)
-{
-	if ((abs(inputX1 - inputX2) <= 1) && (abs(inputY1 - inputY2) == 0)
-		|| (abs(inputX1 - inputX2) == 0) && (abs(inputY1 - inputY2) <= 1))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+
 
 MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindow )
 {
 	myTexture = inputTexture;
 	myWindow = inputWindow;
 
-	//Not sure why we have to do an extra row, whatever! (Tried with one less and it caused out of bounds..... i am insane?!?!)
-	//First resize board to meet savegame specifications.
-	//Also resize mypathMap.
 	Board.resize(BOARD_WIDTH + 1);
 	for (int i = 0; i < BOARD_WIDTH; i++)
 	{
@@ -91,7 +71,7 @@ int MasterBoard::checkWindow()
 //Generates a map by creating a 2D normal distribution and adding to an random-walk-esque 2D heightmap, which provides some element of coherent noise. 
 //This provides an elevation map that is pseudo-coherent but also roughly centered on the center of the map, with additional outlying islands also thrown in.
 //The province map is a set of randomly centered 2D normal distributions that determine control of individual tiles.
-//These tiles are then checked to ensure they're contiguous with the rest of the province.
+//These tiles are then checked to ensure they're contiguous with the at least one other tile of the province.
 //Each province is then randomly assigned to a country.
 int MasterBoard::generateMap()
 {
@@ -128,7 +108,7 @@ int MasterBoard::generateMap()
 		}
 	}
 
-	//For normalArray
+	//Find means for 2D normalArray
 	double meanX = BOARD_WIDTH / 2;
 	double meanY = BOARD_HEIGHT / 2;
 
@@ -140,7 +120,7 @@ int MasterBoard::generateMap()
 
 	//SuperContinentWeight supports a large continent in the middle of the screen.
 	//Recommended between 3-5
-	int SuperContinentWeight = 4;
+	int SuperContinentWeight = 5;
 	
 	// Use current time as seed for random generator
 	srand(time(0));
@@ -239,12 +219,7 @@ int MasterBoard::generateMap()
 			randwalkArray[i][y] += normalArray[i][y] * SuperContinentWeight;
 
 			if (randwalkArray[i][y] < 0)
-				Board[i][y].symbol = '~';
-			else if (randwalkArray[i][y] < 40)
-				Board[i][y].symbol = '.';
-			else if (randwalkArray[i][y] < 80)
-				Board[i][y].symbol = '^';
-			else Board[i][y].symbol = 'M';
+				Board[i][y].terrain = sea;
 
 			Board[i][y].elevation = randwalkArray[i][y];
 		}
@@ -360,8 +335,8 @@ int MasterBoard::generateNames()
 	std::string prefix[10] = { "Republic of ", "Empire of ", "Northern ", "Southern "
 		, "Greater " , "Duchy of ", "Revolutionary ", "Dominion of ", "Confederacy of ",
 		"Federation of " };
-	std::string suffix[10] = { " Republic", " Empire", " Tribes", " State"
-		, " Province" , " Duchy", " Revolutionary Republic", " Dominion", " Confederacy",
+	std::string suffix[9] = { " Republic", " Empire", " Tribes", " State"
+		  , " Duchy", " Revolutionary Republic", " Dominion", " Confederacy",
 		" Federation" };
 
 	std::string dryTerrainSuffix[10] = { " of Desolation", " of Joy", " of Recall", " of Thirst", " of Anger", " of Hunger", " of Sight ", " of Temptation", " of Wisdom", " of Hate" };
@@ -433,7 +408,7 @@ int MasterBoard::generateNames()
 
 		if (isSuffix == true)
 		{
-			firstString += suffix[rand() % 10];
+			firstString += suffix[rand() % 9];
 		}
 
 		std::cout << firstString << std::endl;
@@ -635,4 +610,30 @@ bool MasterBoard::checkNeighbors(int x, int y)
 				}
 	}
 		return true;
+}
+
+int MasterBoard::initializePopulation()
+{
+	for (int i = 1; i < numberOfProvinces + 1; i++)
+	{
+		//For each province, calculate population total based on terrain/climate types.
+		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
+		{
+			listOfProvinces[i].Population +=
+				(listOfProvinces[i].provinceTechLevel * 0.2 + 1) * 100 *
+				Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].agriProductivity;
+		}
+	}
+
+	for (int i = 1; i < numberOfCountries + 1; i++)
+	{
+		//For each province, calculate population total based on terrain/climate types.
+		for (int k = 0; k < listOfCountries[i].listOfControlledProvinces.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
+		{
+			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].Population;
+		}
+		std::cout << "National pop is" << listOfCountries[i].nationalPopulation<<std::endl;
+	}
+
+	return 0;
 }

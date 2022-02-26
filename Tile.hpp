@@ -5,83 +5,48 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-//#include "MasterBoard.hpp"
 #include "SFML/Graphics.hpp"
 
-
-//Forward declare
 extern std::vector <std::vector<sf::IntRect>> rectArray;
 class MasterBoard;
+
+//climateType matrix:						//Wet				Medium			Dry				Hills				Mntns
+enum climateType			/*Freezing*/	{Ice,				Taiga,			Tundra,			ArcticHighland,		ArcticMountain,
+							/*Cool*/		ConiferousForest,	Grassland,		Steppe,			WoodedHighland,		WoodedMountain,
+							/*Warm*/		DeciduousForest,	Scrubland,		Mediterranean,	Highland,			Mountain,
+							/*Hot*/			Jungle,				Savanna,		Desert,			HighDesert,			DesertMountain, 
+																								JungleHighland,		JungleMountain		
+};
+
+//Precipitation, temperature, terrain array used for initialization of tiles
+const climateType climateChoices[3][4][3] =
+{	 //Cold 								cool 											warm 											hot {plain,hill,mtn}
+  { {Ice,ArcticHighland,ArcticMountain}, {ConiferousForest,WoodedHighland,WoodedMountain}, {DeciduousForest,WoodedHighland,WoodedMountain}, {Jungle,JungleHighland,JungleMountain} }, // Wet
+  { {Taiga,ArcticHighland,ArcticMountain}, {Grassland,WoodedHighland,WoodedMountain}, {Scrubland,WoodedHighland,WoodedMountain}, {Savanna,JungleHighland,JungleMountain} },//Normal
+  { {Tundra,ArcticHighland,ArcticMountain}, {Steppe,Highland,Mountain}, {Mediterranean,Highland,Mountain}, {Desert,HighDesert,DesertMountain} }	//Dry	
+};
+
+enum terrainType {sea, land};
 
 class tile 
 {
 public:
-	tile() {
-		symbol = '.';
-	
-		description = "Clear";
-
-		controller = 0;
-		province = 0;
-		production = 0;
-		elevation = 0;
-		precipitation = 0;
-		temperature = 0;
-			   
-		//Basic image init below
-		//This is "plains"
-		textureRectAnchorX = 0;
-		textureRectAnchorY = 0;
-		mySprite.setTextureRect(rectArray[textureRectAnchorX][textureRectAnchorY]);
-		
-	}
-
-	bool checkForProperty( char terrainType)
-	{
-		bool isProperty = false;
-
-		//Non property included for clarity.
-		switch (terrainType)
-		{
-		case('.'):
-		case('+'):
-		case('^'):
-		case('M'):
-		case('='):
-		case('~'):
-		case('-'):
-		case('*'):
-			isProperty = false;
-			break;
-		case('A'):
-		case('P'):
-		case('H'):
-		case('m'):
-		case('n'):
-		case('h'):
-		case('Q'):
-			isProperty = true;
-			break;
-		}
-
-		return isProperty;
-	}
-
-
-	int determineRiverRoadType(bool thisTileChanged, MasterBoard* boardToSet);
 	int determineSeaBeachType(bool thisTileChanged, MasterBoard* boardToSet);
-	int production;				
+	
+	//Basic Characteristics////////////////
 	int controller = 0;			
 	int province = 0;
-	char symbol;
 	int elevation = 0;
 	int precipitation = 0;
 	int temperature = 0;
+	double agriProductivity = 0;
+	climateType climate = Steppe;
+	terrainType terrain = land;
 	std::vector <int> provinceControlPoints;
-
 	std::string description;
 	int locationX;
 	int locationY;
+	//Basic Characteristics////////////////
 
 
 	//GRAPHICS ///////////////////////////
@@ -95,237 +60,305 @@ public:
 	int textureRectAnchorX;
 	//GRAPHICS ///////////////////////////
 
+	tile() {
+
+		climate = Steppe;
+		terrain = land;
+
+		description = "Clear";
+
+		controller = 0;
+		province = 0;
+
+		elevation = 0;
+		precipitation = 0;
+		temperature = 0;
+		agriProductivity = 0;
+
+		//Basic image init below
+		//This is "plains"
+		textureRectAnchorX = 0;
+		textureRectAnchorY = 0;
+		mySprite.setTextureRect(rectArray[textureRectAnchorX][textureRectAnchorY]);
+
+	}
+
 	int clearTile() {
 
-		symbol = '.';
+		terrain = land;
+		climate = Steppe;
 		description = "Clear";
 		controller = 0;
 		province = 0;
 		
 		provinceControlPoints.clear();
 		
-		production = 0;
+
 		elevation = 0;
 		precipitation = 0;
 		temperature = 0;
+		agriProductivity = 0;
 		
 		return 0;
 	}
+	
 
-	int setCharacterstics(sf::Texture * inputTexture, MasterBoard* boardToSet)
+	//Initializes tile based on precipitation, elevation, and temperature.
+	//Thus it requires these to be set previously by Masterboard.
+	int setCharacterstics(sf::Texture* inputTexture, MasterBoard* boardToSet)
 	{
 		myTexture = inputTexture;
 		mySprite.setTexture(*myTexture);
-		
 
-		//New tiles
-		int weatherType = 0;	//Temperate
+		int temperatureChoice = 0;
+		int precipitationChoice = 0;
+		int elevationChoice = 0;
 
-		if (temperature < -20) //Arctic
+		//First categorize different characteristics to use in the choices array.
+		//Precip. choices
+		if (precipitation < -20)		//Dry
 		{
-			weatherType = 3;
+			precipitationChoice = 2;
 		}
-		if (temperature >= 10 && precipitation >= 10)	//Jungle
+		else
+			if (precipitation >= -10 && precipitation < 40)	//Medium
+			{
+				precipitationChoice = 1;
+			}
+			else //Wet
+			{
+				precipitationChoice = 0;
+			}
+
+		//Temperature choices
+		if (temperature < -20) //Freezing
 		{
-			weatherType = 1;
+			temperatureChoice = 0;
 		}
-		if (temperature >= 10 && precipitation < 10)	//Desert
-		{	
-			weatherType = 2;
-		}
+		else
+			if (temperature >= -20 && temperature < 10)	//Cool
+			{
+				temperatureChoice = 1;
+			}
+			else
+				if (temperature >= 10 && temperature < 50)	//Warm
+				{
+					temperatureChoice = 2;
 
-		//Switch plains to forest
-		if (precipitation > 10 && symbol == '.')
+				}
+				else				//Hot
+				{
+					temperatureChoice = 3;
+				}
+
+		//Elevation choices
+		if (elevation < 40)
 		{
-			symbol = '+';
+			elevationChoice = 0;
 		}
+		else
+			if (elevation < 80)
+			{
+				elevationChoice = 1;
+			}
+			else elevationChoice = 2;
 
-		//Sprite had defualt texture-rect set in the constructor
-		
-		switch (symbol)
+
+		//Now assign characteristics to tile based on terrain and climate
+		//If it's sea then nothing else matters.
+		if (terrain == sea)
 		{
-		case('.'):
-		{	
-			description = "Clear terrain.";
-		
-			mySprite.setTextureRect(rectArray[0][weatherType]);
-		
-			break;
-		}
-		case('H'):
-		{
-			description = "City.";
-			
-			production = 2000;
 
-			textureRectAnchorX = 12;
-			textureRectAnchorY = 0;
-
-
-			
-			break;
-		}
-		case('m'):
-		{
-			description = "Mine.";
-			
-			production = 3000;
-
-			break;
-		}
-		case('n'):
-		{
-			description = "Settlement.";
-			
-			production = 1000;
-
-			textureRectAnchorX = 7;
-			textureRectAnchorY = 0;
-			
-	
-			
-			break;
-		}
-		case('h'):
-		{
-			description = "Factory.";
-		
-			production = 1000;
-			textureRectAnchorX = 17;
-			textureRectAnchorY = 0;
-
-
-			
-			
-			break;
-		}
-		case('Q'):
-		{
-			description = "Headquarters.";
-			
-			production = 1000;
-			textureRectAnchorX = 22;
-			textureRectAnchorY = 0;
-
-			
-			break;
-		}
-		case('='):
-		{
-			description = "Road.";
-			
-
-			textureRectAnchorY = 2;
-			textureRectAnchorX = 20;
-
-			mySprite.setTextureRect(rectArray[20][2]);
-			
-
-			determineRiverRoadType(true, boardToSet);
-
-			break;
-		}
-		case('^'):
-		{
-			description = "Hill.";
-			
-			mySprite.setTextureRect(rectArray[2][weatherType]);
-			
-			break;
-		}
-		case('M'):
-		{
-			description = "Mountain.";
-	
-			mySprite.setTextureRect(rectArray[3][weatherType]);
-			
-			break;
-		}
-		case('+'):		//Would like to have convertible to woodlot by engineer.....maybe
-		{
-			description = "Forest.";
-			
-			mySprite.setTextureRect(rectArray[1][weatherType]);
-			
-			break;
-		}
-		case('~'):
-		{
 			description = "High seas.";
-		
 
 			textureRectAnchorY = 9;
 			textureRectAnchorX = 0;
-
 			mySprite.setTextureRect(rectArray[0][9]);
-			
 			determineSeaBeachType(true, boardToSet);
 
-			break;
 		}
-
-		case('-'):
-		{
-			description = "River.";
-			
-			mySprite.setTextureRect(rectArray[9][2]);
-			
-
-			textureRectAnchorY = 2;
-			textureRectAnchorX = 9;
-
-			determineRiverRoadType( true, boardToSet);
-			break;
-		}
-		case('A'):
-		{
-			description = "Airbase.";
-			
-			
-			textureRectAnchorX = 32	;
-			textureRectAnchorY = 0;
-
-		
-			
-
-			production = 1000;
-			break;
-		}
-		case('P'):
-		{
-			description = "Port.";
-			
-			
-			textureRectAnchorX = 27;
-			textureRectAnchorY = 0;
-
-
+		else		//If not sea, consult chart
+		{			
+			climate = climateChoices[precipitationChoice][temperatureChoice][elevationChoice];
 		
 
-			production = 1000;
-			break;
-		}
-		case('*'):
+		//Now with a climate type, other characteristics can be added.
+		switch (climate)
 		{
-			description = "Beach.";
-			
-			textureRectAnchorY = 11;
-			textureRectAnchorX = 0;
-
-			mySprite.setTextureRect(rectArray[0][11]);
-			
-
-			determineSeaBeachType(true, boardToSet);
+		case(Ice):
+		{
+			description = "Ice";
+			mySprite.setTextureRect(rectArray[1][3]);
+			agriProductivity = 5;
+			break;
+		}
+		case(Tundra):
+		{
+			description = "Tundra";
+			mySprite.setTextureRect(rectArray[0][3]);
+			agriProductivity = 10;
+			break;
+		}
+		case(Taiga):
+		{
+			description = "Taiga";
+			mySprite.setTextureRect(rectArray[2][3]);
+			agriProductivity = 15;
+			break;
+		}
+		case(ConiferousForest):
+		{
+			description = "Coniferous Forest";
+			mySprite.setTextureRect(rectArray[1][2]);
+			agriProductivity = 100;
+			break;
+		}
+		case(Scrubland):
+		{
+			description = "Scrubland";
+			mySprite.setTextureRect(rectArray[1][1]);
+			agriProductivity = 120;
+			break;
+		}
+		case(Mediterranean):
+		{
+			description = "Mediterranean Plain";
+			mySprite.setTextureRect(rectArray[1][0]);
+			agriProductivity = 100;
 
 			break;
 		}
+		case(DeciduousForest):
+		{
+			description = "Deciduous Forest";
+			mySprite.setTextureRect(rectArray[2][2]);
+			agriProductivity = 150;
+			break;
 		}
-		//Other terrain types go here
-	
-		return 0;
+		case(Grassland):
+		{
+			description = "Grassland";
+			mySprite.setTextureRect(rectArray[2][1]);
+			agriProductivity = 100;
+			break;
+		}
+		case(Steppe):
+		{
+			description = "Steppe";
+			mySprite.setTextureRect(rectArray[2][0]);
+			agriProductivity = 80;
+
+			break;
+		}
+		case(Desert):
+		{
+			description = "Desert";
+			mySprite.setTextureRect(rectArray[0][0]);
+			agriProductivity = 10;
+			break;
+		}
+		case(Savanna):
+		{
+			description = "Savvana";
+			mySprite.setTextureRect(rectArray[0][1]);
+			agriProductivity = 120;
+			break;
+		}
+		case(Jungle):
+		{
+			description = "Jungle";
+			mySprite.setTextureRect(rectArray[0][2]);
+			agriProductivity = 80;
+
+			break;
+		}
+		case(ArcticHighland):
+		{
+			description = "Alpine Highland";
+			mySprite.setTextureRect(rectArray[3][3]);
+			agriProductivity = 5;
+
+			break;
+		}
+		case(ArcticMountain):
+		{
+			description = "Alpine Mountain";
+			mySprite.setTextureRect(rectArray[4][3]);
+			agriProductivity = 5;
+
+			break;
+		}
+		case(WoodedHighland):
+		{
+			description = "Wooded Highland";
+			mySprite.setTextureRect(rectArray[5][1]);
+			agriProductivity = 80;
+
+			break;
+		}
+		case(WoodedMountain):
+		{
+			description = "WoodedMountain";
+			mySprite.setTextureRect(rectArray[6][1]);
+			agriProductivity = 60;
+
+			break;
+		}
+		case(Highland):
+		{
+			description = "Highland";
+			mySprite.setTextureRect(rectArray[5][0]);
+			agriProductivity = 50;
+
+			break;
+		}
+		case(Mountain):
+		{
+			description = "Mountain";
+			mySprite.setTextureRect(rectArray[6][0]);
+			agriProductivity = 40;
+
+			break;
+		}
+		case(JungleHighland):
+		{
+			description = "Jungle Highland";
+			mySprite.setTextureRect(rectArray[3][1]);
+			agriProductivity = 50;
+
+			break;
+		}
+		case(JungleMountain):
+		{
+			description = "Jungle Mountain";
+			mySprite.setTextureRect(rectArray[4][1]);
+			agriProductivity = 40;
+
+			break;
+		}
+		case(HighDesert):
+		{
+			description = "High Desert";
+			mySprite.setTextureRect(rectArray[3][0]);
+			agriProductivity = 20;
+
+			break;
+		}
+		case(DesertMountain):
+		{
+			description = "Desert Mountain";
+			mySprite.setTextureRect(rectArray[4][0]);
+			agriProductivity = 5;
+
+			break;
+		}
+
+		}
+
 	}
 
-
+		return 0;
+	}
 };
 
 #endif /* TILE_H__ */
