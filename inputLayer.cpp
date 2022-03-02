@@ -1,12 +1,13 @@
 
 #include "inputLayer.hpp"
+#include "MasterBoard.hpp"
 #include "mainmenu.h"
+
 #include <iostream>
 #include <ctype.h>
 #include <fstream>
 #include <cmath>
 #include <thread>
-
 
 inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, std::vector <sf::Sound>* inputSoundEffects)
 {
@@ -216,31 +217,37 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		if (myProvince != 0)
 			nameOfProvince = boardToPrint->listOfProvinces[myProvince].name;
 
-		char buffer[100];
-		snprintf(buffer, 100, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
+		char buffer[200];
+		snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
 		std::string tileDescription = buffer;
 		//Description and Owner//////
 
 		//ELEVATION//////////////////
 		int elevation = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].elevation;
-		snprintf(buffer,100, "\nElevation: %d", elevation);
+		snprintf(buffer,200, "\nElevation: %d", elevation);
 		///	tileDescription += '\n';
 		//tileDescription += "Elevation: ";
 		tileDescription += buffer;
 		//ELEVATION//////////////////
 
-		//Precip/Temp////////////////
+		//Precip/Temp/Pop////////////////
 		int precip = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].precipitation;
 		int temp = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].temperature;
-		int population = boardToPrint->listOfProvinces[myProvince].Population;
+		int urbanPopulation = boardToPrint->listOfProvinces[myProvince].urbanPopulation;
+		int ruralPopulation = boardToPrint->listOfProvinces[myProvince].ruralPopulation;
 		int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation ;
+		int maxUrbanPop = boardToPrint->listOfProvinces[myProvince].maxUrbanPopulation;
+		int maxRuralPop = boardToPrint->listOfProvinces[myProvince].maxRuralPopulation;
 		std::string terrainDescription = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].description;
-		snprintf(buffer, 100, "\nTemperature: %d\nPrecipitation: %d\n%s\nPopulation:\n%d\nNational Population:\n%d", temp, precip, terrainDescription.c_str(), population, nationalPopulation);
-		tileDescription += buffer;
+		snprintf(buffer, 200, "\nTemperature: %d\nPrecipitation: %d\n%s\nRural Population(Max):\n%d\n(%d)\nUrban Population(Max): \n%d\n(%d)\nNational Population : \n%d", temp, precip, terrainDescription.c_str(), ruralPopulation, maxRuralPop, urbanPopulation, maxUrbanPop, nationalPopulation);
+		tileDescription += buffer;		
 		//Precip/Temp////////////////
-			
-		sf::Text newText(tileDescription, *inputLayerFont, MainMenu->menuTextSize);
+		
+		//Other turn data
+		snprintf(buffer, 200, "\nTurn: %d\n", boardToPrint->gameTurn);
+		tileDescription += buffer;
 
+		sf::Text newText(tileDescription, *inputLayerFont, MainMenu->menuTextSize);
 		newText.setPosition(boardToPrint->WINDOW_WIDTH * 52, menuLineTracker * MainMenu->menuTextSize + 4);
 		inputLayerWindow->draw(newText);
 	}
@@ -335,14 +342,15 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 	if (selectedProvince != 0)
 		nameOfProvince = boardToPrint->listOfProvinces[selectedProvince].name;
 
-	char buffer[100];
-	snprintf(buffer, 100, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
+	char buffer[200];
+	snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
 	provinceDescription += buffer;
 
 
-	int population = boardToPrint->listOfProvinces[selectedProvince].Population;
+	int ruralPopulation = boardToPrint->listOfProvinces[selectedProvince].ruralPopulation;
+	int urbanPopulation = boardToPrint->listOfProvinces[selectedProvince].urbanPopulation;
 	int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation;
-	snprintf(buffer, 100, "\nPopulation:\n%d\nNational Population:\n%d", population, nationalPopulation);
+	snprintf(buffer, 200, "\nRural Population:\n%d\nUrban Population: \n%d\nNational Population:\n%d\n", ruralPopulation, urbanPopulation, nationalPopulation);
 	provinceDescription += buffer;
 
 	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);

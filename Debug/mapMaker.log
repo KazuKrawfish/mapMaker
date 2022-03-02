@@ -1,16 +1,2 @@
-﻿  inputLayer.cpp
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(93,65): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(93,44): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(104,68): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(104,47): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(123,63): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(123,42): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(138,67): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(138,46): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(148,57): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(148,36): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(192,74): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(192,53): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(244,97): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\inputLayer.cpp(244,50): warning C4244:  'argument': conversion from 'int' to 'float', possible loss of data
+﻿  mainmenu.cpp
   mapMaker.vcxproj -> C:\Users\Cazimir Park\source\repos\mapMaker\Debug\mapMaker.exe

@@ -130,12 +130,14 @@
     <ClCompile Include="mainmenu.cpp" />
     <ClCompile Include="MasterBoard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Province.cpp" />
     <ClCompile Include="Tile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inputLayer.hpp" />
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MasterBoard.hpp" />
+    <ClInclude Include="Province.hpp" />
     <ClInclude Include="Tile.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

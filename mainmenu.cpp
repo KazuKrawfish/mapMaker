@@ -1,4 +1,3 @@
-#include "MasterBoard.hpp"
 #include "inputLayer.hpp"
 #include "mainmenu.h"
 #include <iostream>
@@ -6,6 +5,7 @@
 #include <fstream>
 #include <stdio.h>
 #include <filesystem>
+#include "MasterBoard.hpp"
 
 mainMenu::mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, 
 	sf::Texture* inputMenuWallpaper, sf::Texture* inputStartWallPaper, sf::Texture* inputTopMenu,
@@ -53,7 +53,7 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 	
 	setCharacteristics(boardToPlay);
 
-	boardToPlay->initializePopulation();
+	boardToPlay->initializeAllPopulation();
 
 
 	sf::Event playerInput;
@@ -73,7 +73,7 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 
 					setCharacteristics(boardToPlay);
 
-					boardToPlay->initializePopulation();
+					boardToPlay->initializeAllPopulation();
 				}
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
@@ -97,6 +97,14 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 				{
 
 					InputLayer->viewStatus = precipitationView;
+
+				}
+				if(playerInput.type ==  playerInput.KeyReleased && playerInput.key.code == sf::Keyboard::N)
+				{
+
+					boardToPlay->advanceTurn();
+					//Clear the rest?
+
 
 				}
 				//If left mouse click

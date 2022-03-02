@@ -1,10 +1,7 @@
 #ifndef MASTERBOARD_HPP__
 #define MASTERBOARD_HPP__
 
-#include "Tile.hpp"
-#include "mainmenu.h"
 #include <vector>
-
 #include <stdio.h>
 #include <string>
 #include <stdlib.h>
@@ -12,8 +9,14 @@
 #include <time.h>
 #include <random>
 #include <cmath>
+#include "SFML/Graphics.hpp"
+
+#include "Province.hpp"
+
 
 class inputLayer;
+//class province;
+class tile;
 
 //Max window size is the physical size of the window:
 const int MAX_WINDOW_HEIGHT = 14;
@@ -24,43 +27,6 @@ const int numberOfProvinces = 20;
 
 const int TILE_SIZE = 50;
 
-enum techLevel {PreIndustrial, Industrial, Mechanized, Modern  };
-
-struct xyCoord 
-{
-	xyCoord(int inputX, int inputY)
-	{
-		 XCoord = inputX;
-		 YCoord = inputY;
-
-	}
-
-	int XCoord = 0;
-	int YCoord = 0;
-};
-
-class province 
-{
-public:
-
-	province()
-	{
-		numberOfSquares = 0;
-		Population = 0;
-		name = "UNKNOWN";
-		controller = 0;
-		listOfTiles.clear();
-	}
-
-
-	int numberOfSquares = 0;
-	int Population = 0;
-	techLevel provinceTechLevel = PreIndustrial;
-	std::string name;
-	int controller = 0;
-	std::vector <xyCoord> listOfTiles;
-	
-};
 
 struct country
 {
@@ -83,6 +49,8 @@ class MasterBoard
 {
 public:
 	
+	int gameTurn = 0;
+
 	MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow);
 	bool checkNeighbors(int x, int y);
 
@@ -94,7 +62,8 @@ public:
 	//Political//////////////////
 	std::vector <country> listOfCountries;
 	std::vector<province> listOfProvinces;
-	int initializePopulation();
+	int initializeAllPopulation();
+	int initializeProvince(int input);
 	//Political//////////////////
 
 	//MAP GENERATION/////////////////
@@ -119,6 +88,16 @@ public:
 	sf::Window *  myWindow;
 	//GRAPHICS	///////////////////////////////
 
+
+	//GAME MECHANICS//////////////////////////
+
+	int advanceTurn();
+	int updateAllProvinces();
+	int updateProvince(int input);
+
+
+
+	//GAME MECHANICS//////////////////////////
 
 };
 

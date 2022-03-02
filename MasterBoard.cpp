@@ -1,16 +1,19 @@
-#include "MasterBoard.hpp"
+
 #include <string>
 #include <iostream>
-#include "inputLayer.hpp"
 #include <cmath>
-#include "mainmenu.h"
 #include <iostream>
 #include <fstream>
 
-
+#include "MasterBoard.hpp"
+#include "Tile.hpp"
+#include "inputLayer.hpp"
+#include "mainmenu.h"
 
 MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindow )
 {
+	gameTurn = 0;
+
 	myTexture = inputTexture;
 	myWindow = inputWindow;
 
@@ -29,6 +32,7 @@ MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindo
 
 int MasterBoard::clearBoard()
 {
+	gameTurn = 0;
 	//Clear countries and provinces
 	listOfCountries.clear();
 	listOfCountries.resize(numberOfCountries + 1);
@@ -612,17 +616,11 @@ bool MasterBoard::checkNeighbors(int x, int y)
 		return true;
 }
 
-int MasterBoard::initializePopulation()
+int MasterBoard::initializeAllPopulation()
 {
 	for (int i = 1; i < numberOfProvinces + 1; i++)
 	{
-		//For each province, calculate population total based on terrain/climate types.
-		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
-		{
-			listOfProvinces[i].Population +=
-				(listOfProvinces[i].provinceTechLevel * 0.2 + 1) * 100 *
-				Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].agriProductivity;
-		}
+		initializeProvince(  i );
 	}
 
 	for (int i = 1; i < numberOfCountries + 1; i++)
@@ -630,9 +628,108 @@ int MasterBoard::initializePopulation()
 		//For each province, calculate population total based on terrain/climate types.
 		for (int k = 0; k < listOfCountries[i].listOfControlledProvinces.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
 		{
-			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].Population;
+			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].ruralPopulation;
+			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].urbanPopulation;
 		}
 		std::cout << "National pop is" << listOfCountries[i].nationalPopulation<<std::endl;
+	}
+
+	return 0;
+}
+
+
+int MasterBoard::initializeProvince(int input) 
+{
+	province* ProvinceToInitialize = &listOfProvinces[input];
+
+	//Reminder that the province's starting pop is from pre-industrial while its max is at level 2, industrial.
+	techLevel prestartTech = PreIndustrial;
+	
+	//For each province, calculate rural population total based on terrain/climate types and tech level.
+	//Max pop is based on current tech level. Initial pop is based on pre-industrial tech level.
+	for (int k = 0; k < ProvinceToInitialize->listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
+	{
+		//Starting max pop
+		ProvinceToInitialize->maxRuralPopulation +=
+			techLevelAgriBonus[ProvinceToInitialize->provinceTechLevel] * 100 *
+			Board[ProvinceToInitialize->listOfTiles[k].XCoord][ProvinceToInitialize->listOfTiles[k].YCoord].agriProductivity;
+		
+		//Actual pop
+		ProvinceToInitialize->ruralPopulation +=
+			techLevelAgriBonus[prestartTech] * 100 *
+			Board[ProvinceToInitialize->listOfTiles[k].XCoord][ProvinceToInitialize->listOfTiles[k].YCoord].agriProductivity;
+
+	}
+	//Then find starting urban pop, and maximum pop.
+	ProvinceToInitialize->urbanPopulation = UrbanRuralRatio[prestartTech] * ProvinceToInitialize->ruralPopulation;
+	ProvinceToInitialize->maxUrbanPopulation = UrbanRuralRatio[ProvinceToInitialize->provinceTechLevel] * ProvinceToInitialize->ruralPopulation;
+
+	return 0;
+}
+
+
+int MasterBoard::advanceTurn() 
+{
+	updateAllProvinces();
+	gameTurn++;
+	return 0;
+}
+
+int MasterBoard::updateAllProvinces() 
+{
+	for (int i = 1; i < numberOfProvinces + 1; i++)
+	{
+		updateProvince(i);
+	}
+	return 0;
+}
+
+int MasterBoard::updateProvince(int input)
+{
+	province* ProvinceToUpdate = &listOfProvinces[input];
+	
+	//First update provincial growth modifiers
+	double ruralGrowthRate = 0;
+	double urbanGrowthRate = 0;
+
+	//AgriproductivityBonus x 2
+	ProvinceToUpdate->listOfUrbanGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
+	ProvinceToUpdate->listOfRuralGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
+
+	//Add all factors to rural growth rate.
+	for(int i = 0 ; i < 2; i++)
+		ruralGrowthRate += ProvinceToUpdate->listOfRuralGrowthModifiers[i].GrowthModiferValue;
+	
+	//If at max AND positive growth, then urban growth factor gets rural growth rate added to it.
+	if (ProvinceToUpdate->ruralPopulation >= ProvinceToUpdate->maxRuralPopulation && ruralGrowthRate > 0 )
+	{
+		ProvinceToUpdate->listOfUrbanGrowthModifiers[2].GrowthModiferValue = ruralGrowthRate;
+	}
+	else //If not max pop
+	{
+		double pop = ProvinceToUpdate->ruralPopulation;
+		ProvinceToUpdate->ruralPopulation = int (pop * (1 + ruralGrowthRate / 100) );
+	}
+	//If we hit the max afterwards, set to max.
+	if (ProvinceToUpdate->ruralPopulation > ProvinceToUpdate->maxRuralPopulation) 
+	{
+		ProvinceToUpdate->ruralPopulation = ProvinceToUpdate->maxRuralPopulation;
+	}
+
+	//Insert war and building effects here.
+
+	//Add all factors to urban growth rate.
+	for (int i = 0; i < 4; i++)
+		urbanGrowthRate += ProvinceToUpdate->listOfUrbanGrowthModifiers[i].GrowthModiferValue;
+	if (ProvinceToUpdate->urbanPopulation < ProvinceToUpdate->maxUrbanPopulation)
+	{
+		double pop = ProvinceToUpdate->urbanPopulation;
+		ProvinceToUpdate->urbanPopulation = int(pop * (1 + urbanGrowthRate / 100));
+	}
+	//If we hit the max afterwards, set to max.
+	if (ProvinceToUpdate->urbanPopulation > ProvinceToUpdate->maxUrbanPopulation)
+	{
+		ProvinceToUpdate->urbanPopulation = ProvinceToUpdate->maxUrbanPopulation;
 	}
 
 	return 0;

@@ -2,11 +2,10 @@
 #define INPUT_HPP__
 
 #include <SFML/Audio.hpp>
-//#include "MasterBoard.hpp"
-#include "mainmenu.h"
 #include "Tile.hpp"
 
 class MasterBoard;
+class mainMenu;
 
 enum gameInputLayer { defaultView, politicalView, temperatureView, precipitationView };
 enum screenType { gameBoardScreen, dataScreen };

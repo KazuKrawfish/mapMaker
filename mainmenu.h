@@ -2,7 +2,6 @@
 #define MAINMENU_HPP__
 
 #include "Tile.hpp"
-#include "MasterBoard.hpp"
 #include <SFML/Audio.hpp>
 
 class inputLayer;
