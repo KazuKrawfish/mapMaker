@@ -49,26 +49,6 @@ int main()
 	//Load textures
 	sf::Texture mainTexture;
 	sf::Image mainImage;
-	sf::Texture warshipTexture;
-	sf::Image warshipsImage;
-	sf::Image troopsImage;
-	sf::Texture troopsTexture;
-	sf::Image topMenuImage;
-	sf::Texture topMenuTexture;
-	sf::Image startScreenImage;
-	sf::Texture startScreenTexture;
-
-	//Load Sounds/Music
-	sf::Music introMusic;
-
-	
-
-	//Initialize Sounds Array
-	const int numberOfSoundEffects = 20;
-	std::vector <std::string> soundEffectNames = { "machineGun", "rpg", "cannon", "antiAircraftCannon", "infantryMove", "vehicleMove", "buildUnit", "capture", "resupply", "repair", "trapped" };
-	std::vector <sf::SoundBuffer > soundEffectBuffers;
-	std::vector <sf::Sound> soundEffects;
-	soundEffects.resize(numberOfSoundEffects + 1);
 
 		
 	//Initialize intRect grid
@@ -93,62 +73,21 @@ int main()
 	{
 		std::cout << "Couldn't load image!" << std::endl;
 	}
-	if (!troopsImage.loadFromFile("troops.png"))
-	{
-		std::cout << "Couldn't load image!" << std::endl;
-	}
-	if (!warshipsImage.loadFromFile("warships.png"))
-	{
-		std::cout << "Couldn't load image!" << std::endl;
-	}
-	if (!topMenuImage.loadFromFile("topMenu.png"))
-	{
-		std::cout << "Couldn't load image!" << std::endl;
-	}
-	if (!startScreenImage.loadFromFile("startScreenStatement.png"))
-	{
-		std::cout << "Couldn't load image!" << std::endl;
-	}
-	if (!introMusic.openFromFile("soundEffects\\introTheme.wav"))
-	{
-		std::cout << "Couldn't load intro theme!" << std::endl;
-	}
 	
-	//Init sound effect buffer and sound arrays
-	soundEffectBuffers.resize(soundEffectNames.size() + 1);
-	for (int i = 0; i < soundEffectNames.size(); i++)
-	{
-		std::string fileName = "soundEffects\\" + soundEffectNames[i] + ".wav";
-		if (!soundEffectBuffers[i].loadFromFile(fileName))
-		{
-			std::cout << "Couldn't load" << soundEffectNames[i]<< std::endl;
-		}
-		//Transfer Sound Buffer to Sounds
-
-		soundEffects[i].setBuffer(soundEffectBuffers[i]);
-	}
-
 	sf::Color colorWhite;
-	
-	//Transfer Images to Textures
-	warshipTexture.loadFromImage(warshipsImage);
-	troopsTexture.loadFromImage(troopsImage);
-	topMenuTexture.loadFromImage(topMenuImage);
-	startScreenTexture.loadFromImage(startScreenImage);
 	
 	mainImage.createMaskFromColor(colorWhite.White);
 	mainTexture.loadFromImage(mainImage);
 
-	if (!cour.loadFromFile("times.ttf"))
+	if (!cour.loadFromFile("Fonts/times.ttf"))
 	{
 		std::cout << "Couldn't load fonts!" << std::endl;
 	}
 	
 
-
-	mainMenu MainMenu(&mainWindow, &mainTexture, &cour, &warshipTexture,& troopsTexture, &topMenuTexture, &startScreenTexture , &introMusic);
+	mainMenu MainMenu(&mainWindow, &mainTexture, &cour);
 	
-	inputLayer InputLayer(&MainMenu, &mainWindow , &mainTexture, &cour, &soundEffects);
+	inputLayer InputLayer(&MainMenu, &mainWindow , &mainTexture, &cour);
 	MasterBoard GameBoard(&mainTexture, &mainWindow);
 
 	MainMenu.playGame(&GameBoard, &InputLayer);

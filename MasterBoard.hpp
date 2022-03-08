@@ -40,6 +40,7 @@ struct country
 	std::string name;
 	std::vector <int> listOfControlledProvinces;
 	int nationalPopulation = 0;
+	int nationalWealth = 0;
 
 };
 
@@ -62,9 +63,15 @@ public:
 	//Political//////////////////
 	std::vector <country> listOfCountries;
 	std::vector<province> listOfProvinces;
-	int initializeAllPopulation();
-	int initializeProvince(int input);
+	int initializeAllProvinces();
+	int initializeProvincePopulation(int input);
+	int initializeProvinceWealth(int input);
+	int initializeProvinceTradeRoutes(int input);
+	int initializeProvinceConnections(int i);
 	//Political//////////////////
+	int updateProvinceWealth(int i);
+	int updateProvincePopulation(int i);
+
 
 	//MAP GENERATION/////////////////
 

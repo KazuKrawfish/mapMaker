@@ -26,9 +26,7 @@ public:
 
 	
 	//CONSTRUCTOR
-	mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, 
-		sf::Texture* inputMenuWallpaper, sf::Texture* inputStartWallPaper, sf::Texture* inputTopMenu ,
-		sf::Texture* inputstartScreenStatement, sf::Music* inputIntroMusic);
+	mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour);
 	//CONSTRUCTOR
 
 	const int menuTextSize = 20;
@@ -43,10 +41,6 @@ public:
 	//SFML Objects		/////////////////////////
 	sf::RenderWindow* mywindow;
 	sf::Texture* myTexture;
-	sf::Texture* menuWallPaper;
-	sf::Texture* startWallPaper;
-	sf::Texture* startScreenStatement;
-	sf::Texture* topMenuTexture;
 	sf::Font* myFont;
 
 	sf::Music* introMusic;

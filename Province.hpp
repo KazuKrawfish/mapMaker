@@ -2,12 +2,18 @@
 #define PROVINCE_HPP__
 
 #include <vector>
+#include <string>
+#include <iostream>
 
 enum techLevel: int { PreIndustrial = 1, Industrial = 2, Mechanized = 3, Modern  = 4};
+enum techGroup  {Western, Eastern, Natives};
 
 //The zero value here is garbage.
 const double techLevelAgriBonus[5] = {-100, 1,2,3,4 };
 const double UrbanRuralRatio[5] = {-100, 0.2, 1, 5, 10 };
+const double techLevelWealthBonus[5] = { -100, 1,3,5,10 };
+
+
 
 
 struct xyCoord
@@ -45,24 +51,41 @@ public:
 		maxRuralPopulation = 0;
 		maxUrbanPopulation = 0;
 
+		ruralWealth = 0;
+		urbanWealth = 0;
+
 		name = "UNKNOWN";
 		controller = 0;
 		listOfTiles.clear();
+		tradeRoutes.clear();
 
 		provinceTechLevel = Industrial;
+		techGroup provinceTechGroup = Natives;
 
 	}
 
 	//War - 5% for now.
 	//RuralPopAtMax - Add whatever it would be for rural, to the urban growth.
 	//AgriProductivity - 2xTechLevelAgriBonus
-	growthModifiers listOfUrbanGrowthModifiers[4]  = {	{"WarModifier", 0 },
+	growthModifiers listOfUrbanPopGrowthModifiers[4]  = {	{"WarModifier", 0 },
 													{"AgriProductivityX2",0 },
 													{"RuralPopAtMaxBonus", 0} ,
 													{"NumberOfBuildings", 0} };
 
-	growthModifiers listOfRuralGrowthModifiers[4] = { {"WarModifier", 0 },
+	growthModifiers listOfRuralPopGrowthModifiers[2] = { {"WarModifier", 0 },
 													{"AgriProductivityX2",0 } };
+
+	growthModifiers listOfUrbanWealthGrowthModifiers[4] = { {"WarModifier", 0 },
+														{"UrbanPopGrowth",0 },
+														{"TechBonus", 0},
+														{"TradeRoutes", 0}  //(1,3, 5,10)
+	};
+
+	//Describes the physical connections between provinces. 0 indicates sea connection.
+	std::vector <int> connectionsList;
+
+	//Describes the province numbers that have a trade route with this province.
+	std::vector <int >tradeRoutes;
 
 	int numberOfSquares = 0;
 	int ruralPopulation = 0;
@@ -71,10 +94,18 @@ public:
 	int maxRuralPopulation = 0;
 	int maxUrbanPopulation = 0;
 
+	int ruralWealth = 0;
+	int urbanWealth = 0;
+
 	techLevel provinceTechLevel = Industrial;
+	techGroup provinceTechGroup = Natives;
 	std::string name;
 	int controller = 0;
+	
 	std::vector <xyCoord> listOfTiles;
+
+	int updateProvinceTechLevel();
+	int updateProvincePopulation();
 
 };
 

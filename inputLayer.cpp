@@ -9,13 +9,12 @@
 #include <cmath>
 #include <thread>
 
-inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, std::vector <sf::Sound>* inputSoundEffects)
+inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour)
 {
 	inputLayerTexture = gameTexture;
 	inputLayerFont = cour;
 	inputLayerWindow = myWindow;
 	MainMenu = inputMainMenu;
-	soundEffects = inputSoundEffects;
 
 
 	politicalColors.resize(numberOfCountries + 1);
@@ -244,7 +243,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Precip/Temp////////////////
 		
 		//Other turn data
-		snprintf(buffer, 200, "\nTurn: %d\n", boardToPrint->gameTurn);
+		snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %d\nTurn: %d\n", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel) , boardToPrint->listOfProvinces[myProvince].provinceTechGroup, boardToPrint->gameTurn);
 		tileDescription += buffer;
 
 		sf::Text newText(tileDescription, *inputLayerFont, MainMenu->menuTextSize);
@@ -325,11 +324,9 @@ int inputLayer::selectProvince(MasterBoard* boardToPrint)
 
 }
 
-int inputLayer::printDataScreen(MasterBoard* boardToPrint) 
+
+int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 {
-	//Description and Owner///////
-
-
 	int myController = boardToPrint->listOfProvinces[selectedProvince].controller;
 
 	std::string provinceDescription = "";
@@ -337,7 +334,7 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 	std::string myControllerName = "";
 
 	if (myController != 0)
-		myControllerName = boardToPrint->listOfCountries[myController].name ;
+		myControllerName = boardToPrint->listOfCountries[myController].name;
 
 	if (selectedProvince != 0)
 		nameOfProvince = boardToPrint->listOfProvinces[selectedProvince].name;
@@ -348,10 +345,33 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 
 
 	int ruralPopulation = boardToPrint->listOfProvinces[selectedProvince].ruralPopulation;
+	int ruralGrowthRate = 0;
+	//Add all factors to find urban growth rate.
+	for (int i = 0; i < 2; i++)
+		ruralGrowthRate += boardToPrint->listOfProvinces[selectedProvince].listOfRuralPopGrowthModifiers[i].GrowthModiferValue;
+
 	int urbanPopulation = boardToPrint->listOfProvinces[selectedProvince].urbanPopulation;
+	int urbanGrowthRate = 0;
+	//Add all factors to find urban growth rate.
+	for (int i = 0; i < 4; i++)
+		urbanGrowthRate += boardToPrint->listOfProvinces[selectedProvince].listOfUrbanPopGrowthModifiers[i].GrowthModiferValue;
+
 	int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation;
-	snprintf(buffer, 200, "\nRural Population:\n%d\nUrban Population: \n%d\nNational Population:\n%d\n", ruralPopulation, urbanPopulation, nationalPopulation);
+
+	//Wealth values
+	int urbanWealth = boardToPrint->listOfProvinces[selectedProvince].urbanWealth;
+	int urbanWealthGrowthRate = 0;
+	for (int i = 0; i < 4; i++)
+		urbanWealthGrowthRate += boardToPrint->listOfProvinces[selectedProvince].listOfUrbanWealthGrowthModifiers[i].GrowthModiferValue;
+
+	int totalWealth = urbanWealth + boardToPrint->listOfProvinces[selectedProvince].ruralWealth;
+	int totalWealthGrowth = (urbanWealth * urbanWealthGrowthRate + boardToPrint->listOfProvinces[selectedProvince].ruralWealth * ruralGrowthRate) / totalWealth;
+
+	snprintf(buffer, 200, "\nRural Population:\n%dRurGrowth: %d\nUrban Population:\nUrbGrowth: %d\n%d\nNational Population:\n%d\nUrban Wealth:\n%d\nGrowth:\n%d\n",
+		ruralPopulation, ruralGrowthRate, urbanPopulation, urbanGrowthRate, nationalPopulation, urbanWealth, urbanWealthGrowthRate);
 	provinceDescription += buffer;
+
+
 
 	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);
 

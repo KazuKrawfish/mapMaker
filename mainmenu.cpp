@@ -7,16 +7,9 @@
 #include <filesystem>
 #include "MasterBoard.hpp"
 
-mainMenu::mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, 
-	sf::Texture* inputMenuWallpaper, sf::Texture* inputStartWallPaper, sf::Texture* inputTopMenu,
-	sf::Texture* inputstartScreenStatement, sf::Music* inputIntroMusic)
+mainMenu::mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture , sf::Font* cour)
 {
 	myTexture = gameTexture;
-	menuWallPaper = inputMenuWallpaper;
-	startWallPaper = inputStartWallPaper;
-	topMenuTexture = inputTopMenu;
-	startScreenStatement = inputstartScreenStatement;
-	introMusic = inputIntroMusic;
 	myFont = cour;
 	mywindow = myWindow;
 
@@ -53,7 +46,7 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 	
 	setCharacteristics(boardToPlay);
 
-	boardToPlay->initializeAllPopulation();
+	boardToPlay->initializeAllProvinces();
 
 
 	sf::Event playerInput;
@@ -73,7 +66,7 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 
 					setCharacteristics(boardToPlay);
 
-					boardToPlay->initializeAllPopulation();
+					boardToPlay->initializeAllProvinces();
 				}
 
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))

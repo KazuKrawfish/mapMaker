@@ -1,4 +1,3 @@
-
 #include <string>
 #include <iostream>
 #include <cmath>
@@ -10,7 +9,7 @@
 #include "inputLayer.hpp"
 #include "mainmenu.h"
 
-MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindow )
+MasterBoard::MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow)
 {
 	gameTurn = 0;
 
@@ -23,9 +22,9 @@ MasterBoard::MasterBoard(sf::Texture *inputTexture, sf::RenderWindow* inputWindo
 		Board[i].resize(BOARD_HEIGHT);
 	}
 
-	listOfCountries.resize(numberOfCountries+1);
+	listOfCountries.resize(numberOfCountries + 1);
 
-	listOfProvinces.resize(numberOfProvinces+1);
+	listOfProvinces.resize(numberOfProvinces + 1);
 
 	return;
 }
@@ -84,20 +83,20 @@ int MasterBoard::generateMap()
 	if (myfile.is_open() == false)
 		std::cout << "failed open" << std::endl;
 	else std::cout << "succesfful open" << std::endl;
-	
+
 	myfile << "Writing this to a file.\n";
 
 	//Initialize two 2D random vectors.
 	std::vector < std::vector <int>> randwalkArray;
 	randwalkArray.resize(BOARD_WIDTH + 1);
-	for (int i = 0; i < BOARD_WIDTH; i ++ )
+	for (int i = 0; i < BOARD_WIDTH; i++)
 		randwalkArray[i].resize(BOARD_HEIGHT + 1);
-	
+
 	std::vector < std::vector <int>> normalArray;
 	normalArray.resize(BOARD_WIDTH + 1);
 	for (int i = 0; i < BOARD_WIDTH; i++)
 		normalArray[i].resize(BOARD_HEIGHT + 1);
-	
+
 	//Resize board
 	Board.resize(BOARD_WIDTH + 1);
 	for (int i = 0; i < BOARD_WIDTH; i++)
@@ -108,7 +107,7 @@ int MasterBoard::generateMap()
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			//Resize and reset province control points
-			Board[x][y].provinceControlPoints.resize(numberOfProvinces + 1, 0 );
+			Board[x][y].provinceControlPoints.resize(numberOfProvinces + 1, 0);
 		}
 	}
 
@@ -125,7 +124,7 @@ int MasterBoard::generateMap()
 	//SuperContinentWeight supports a large continent in the middle of the screen.
 	//Recommended between 3-5
 	int SuperContinentWeight = 5;
-	
+
 	// Use current time as seed for random generator
 	srand(time(0));
 	std::random_device rd{};
@@ -158,13 +157,13 @@ int MasterBoard::generateMap()
 		{
 			int x = std::round(newX(gen));
 			int y = std::round(newY(gen));
-			if (x > 0 && y > 0 && x < BOARD_WIDTH  && y < BOARD_HEIGHT - 1)
+			if (x > 0 && y > 0 && x < BOARD_WIDTH && y < BOARD_HEIGHT - 1)
 				++normalArray[x][y];
 		}
 	}
 
 
-//Finalize normal array by subtracting some constant number to "normalize".
+	//Finalize normal array by subtracting some constant number to "normalize".
 	for (int i = 0; i < BOARD_WIDTH; i++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
@@ -246,7 +245,7 @@ int MasterBoard::generateMap()
 		{
 			int x = std::round(newX(gen));
 			int y = std::round(newY(gen));
-			if (x > 0 && y > 0 && x < BOARD_WIDTH   && y < BOARD_HEIGHT  )
+			if (x > 0 && y > 0 && x < BOARD_WIDTH && y < BOARD_HEIGHT)
 				Board[x][y].provinceControlPoints[i]++;
 		}
 	}
@@ -269,7 +268,7 @@ int MasterBoard::generateMap()
 
 			}
 
-			myfile << Board[x][y].controller<<" ";
+			myfile << Board[x][y].controller << " ";
 		}
 		myfile << std::endl;
 	}
@@ -289,25 +288,25 @@ int MasterBoard::generateMap()
 			if (Board[x][y].province != 0)
 			{
 				listOfProvinces[Board[x][y].province].listOfTiles.emplace_back(x, y);
-				
+
 			}
 
 		}
 	}
 
 	//Assign provinces randomly to countries
-	for (int i = 1; i < numberOfProvinces + 1; i++) 
+	for (int i = 1; i < numberOfProvinces + 1; i++)
 	{
 		int winnerCountry = 1 + rand() % numberOfCountries;
 		listOfProvinces[i].controller = winnerCountry;
 		listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
-		
+
 		//Assign new controller to each tile in province.
 		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
 		{
 			Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].controller = winnerCountry;
 		}
-	
+
 	}
 
 	generateNames();
@@ -318,7 +317,7 @@ int MasterBoard::generateMap()
 	return 0;
 }
 
-int MasterBoard::generateNames() 
+int MasterBoard::generateNames()
 {
 
 	char vowelList[5] = { 'a','e','i','o','u' };
@@ -426,7 +425,7 @@ int MasterBoard::generateNames()
 		std::string firstString;
 
 		int componentNumber = rand() % 5;
-		
+
 		//Make initial name of one syllables
 		firstString += startConsList[rand() % startConsNum];
 		firstString += vowelList[rand() % 5];
@@ -457,9 +456,9 @@ int MasterBoard::generateNames()
 
 }
 
-int MasterBoard::generatePrecipAndTemp() 
+int MasterBoard::generatePrecipAndTemp()
 {
-	
+
 	std::vector < std::vector <int>> normalPrecipArray;
 	normalPrecipArray.resize(BOARD_WIDTH + 1);
 	for (int i = 0; i < BOARD_WIDTH; i++)
@@ -539,12 +538,12 @@ int MasterBoard::generatePrecipAndTemp()
 
 
 	//Print out results for pers.
-	for (int x = 0;x < BOARD_WIDTH; x++)
+	for (int x = 0; x < BOARD_WIDTH; x++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
 			normalPrecipArray[x][y] -= (meanX / 2 + meanY / 2); //This is the "normalization" so the array doesn't JUST increase values
-			Board[x][y].precipitation = 2*normalPrecipArray[x][y];
+			Board[x][y].precipitation = 2 * normalPrecipArray[x][y];
 		}
 		std::cout << std::endl;
 	}
@@ -555,7 +554,7 @@ int MasterBoard::generatePrecipAndTemp()
 		{
 
 			normalTempArray[x][y] -= (meanX / 2 + meanY / 2);	//This is the "normalization" so the array doesn't JUST increase values
-			Board[x][y].temperature = 3*normalTempArray[x][y];
+			Board[x][y].temperature = 3 * normalTempArray[x][y];
 		}
 		std::cout << std::endl;
 	}
@@ -575,7 +574,7 @@ bool MasterBoard::checkNeighbors(int x, int y)
 	{
 		isolatedTile = false;
 	}
-	if (y > 0 && Board[x ][y - 1].province == Board[x][y].province)
+	if (y > 0 && Board[x][y - 1].province == Board[x][y].province)
 	{
 		isolatedTile = false;
 	}
@@ -583,68 +582,80 @@ bool MasterBoard::checkNeighbors(int x, int y)
 	{
 		isolatedTile = false;
 	}
-	if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province == Board[x][y].province)
+	if (y < BOARD_HEIGHT - 1 && Board[x][y + 1].province == Board[x][y].province)
 	{
 		isolatedTile = false;
 	}
 
 
 	//In future this will assign the province of a random valid neighboring square, but for now it simply goes in order and assigns the province of the first valid neighboring square.
-	if (isolatedTile == true )
+	if (isolatedTile == true)
 	{
-		
-	if (x > 0 && Board[x - 1][y].province != 0)
-	{
-		Board[x][y].province = Board[x - 1][y].province;
-	}
-	else
-		if (y>0 && Board[x ][y - 1].province != 0)
+
+		if (x > 0 && Board[x - 1][y].province != 0)
 		{
-			Board[x][y].province = Board[x][y - 1].province ;
+			Board[x][y].province = Board[x - 1][y].province;
 		}
 		else
-			if (x < BOARD_WIDTH - 1 && Board[x + 1][y ].province != 0)
+			if (y > 0 && Board[x][y - 1].province != 0)
 			{
-				Board[x][y].province = Board[x + 1][y].province ;
+				Board[x][y].province = Board[x][y - 1].province;
 			}
 			else
-				if (y < BOARD_HEIGHT - 1 && Board[x ][y + 1].province != 0)
+				if (x < BOARD_WIDTH - 1 && Board[x + 1][y].province != 0)
 				{
-					Board[x][y].province = Board[x][y + 1].province;
+					Board[x][y].province = Board[x + 1][y].province;
 				}
+				else
+					if (y < BOARD_HEIGHT - 1 && Board[x][y + 1].province != 0)
+					{
+						Board[x][y].province = Board[x][y + 1].province;
+					}
 	}
-		return true;
+	return true;
 }
 
-int MasterBoard::initializeAllPopulation()
+int MasterBoard::initializeAllProvinces()
 {
 	for (int i = 1; i < numberOfProvinces + 1; i++)
 	{
-		initializeProvince(  i );
+		initializeProvincePopulation(i);
+		initializeProvinceWealth(i);
+		initializeProvinceConnections(i);
+		initializeProvinceTradeRoutes(i);
 	}
 
 	for (int i = 1; i < numberOfCountries + 1; i++)
 	{
-		//For each province, calculate population total based on terrain/climate types.
+		//Determine national population total.
 		for (int k = 0; k < listOfCountries[i].listOfControlledProvinces.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
 		{
 			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].ruralPopulation;
 			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].urbanPopulation;
 		}
-		std::cout << "National pop is" << listOfCountries[i].nationalPopulation<<std::endl;
+		std::cout << "National pop is" << listOfCountries[i].nationalPopulation << std::endl;
+
+		for (int k = 0; k < listOfCountries[i].listOfControlledProvinces.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
+		{
+			listOfCountries[i].nationalWealth += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].urbanWealth;
+			listOfCountries[i].nationalWealth += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].ruralWealth;
+		}
+		std::cout << "National wealth is" << listOfCountries[i].nationalWealth << std::endl;
+
+
 	}
 
 	return 0;
 }
 
 
-int MasterBoard::initializeProvince(int input) 
+int MasterBoard::initializeProvincePopulation(int input)
 {
 	province* ProvinceToInitialize = &listOfProvinces[input];
 
 	//Reminder that the province's starting pop is from pre-industrial while its max is at level 2, industrial.
 	techLevel prestartTech = PreIndustrial;
-	
+
 	//For each province, calculate rural population total based on terrain/climate types and tech level.
 	//Max pop is based on current tech level. Initial pop is based on pre-industrial tech level.
 	for (int k = 0; k < ProvinceToInitialize->listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
@@ -653,7 +664,8 @@ int MasterBoard::initializeProvince(int input)
 		ProvinceToInitialize->maxRuralPopulation +=
 			techLevelAgriBonus[ProvinceToInitialize->provinceTechLevel] * 100 *
 			Board[ProvinceToInitialize->listOfTiles[k].XCoord][ProvinceToInitialize->listOfTiles[k].YCoord].agriProductivity;
-		
+
+
 		//Actual pop
 		ProvinceToInitialize->ruralPopulation +=
 			techLevelAgriBonus[prestartTech] * 100 *
@@ -667,60 +679,75 @@ int MasterBoard::initializeProvince(int input)
 	return 0;
 }
 
+int MasterBoard::initializeProvinceWealth(int input)
+{
+	province* ProvinceToInitialize = &listOfProvinces[input];
 
-int MasterBoard::advanceTurn() 
+	//Province starting wealth is 1 per population.
+	ProvinceToInitialize->ruralWealth = ProvinceToInitialize->ruralPopulation;
+	ProvinceToInitialize->urbanWealth = ProvinceToInitialize->urbanPopulation;
+
+	return 0;
+}
+
+int MasterBoard::advanceTurn()
 {
 	updateAllProvinces();
 	gameTurn++;
 	return 0;
 }
 
-int MasterBoard::updateAllProvinces() 
+int MasterBoard::updateAllProvinces()
 {
 	for (int i = 1; i < numberOfProvinces + 1; i++)
 	{
-		updateProvince(i);
+		updateProvincePopulation(i);
+		updateProvinceWealth(i);
 	}
 	return 0;
 }
 
-int MasterBoard::updateProvince(int input)
+int MasterBoard::updateProvincePopulation(int input)
 {
 	province* ProvinceToUpdate = &listOfProvinces[input];
-	
+
 	//First update provincial growth modifiers
 	double ruralGrowthRate = 0;
 	double urbanGrowthRate = 0;
 
 	//AgriproductivityBonus x 2
-	ProvinceToUpdate->listOfUrbanGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
-	ProvinceToUpdate->listOfRuralGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
+	ProvinceToUpdate->listOfUrbanPopGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
+	ProvinceToUpdate->listOfRuralPopGrowthModifiers[1].GrowthModiferValue = 2 * techLevelAgriBonus[ProvinceToUpdate->provinceTechLevel];
 
 	//Add all factors to rural growth rate.
-	for(int i = 0 ; i < 2; i++)
-		ruralGrowthRate += ProvinceToUpdate->listOfRuralGrowthModifiers[i].GrowthModiferValue;
-	
+	for (int i = 0; i < 2; i++)
+		ruralGrowthRate += ProvinceToUpdate->listOfRuralPopGrowthModifiers[i].GrowthModiferValue;
+
 	//If at max AND positive growth, then urban growth factor gets rural growth rate added to it.
-	if (ProvinceToUpdate->ruralPopulation >= ProvinceToUpdate->maxRuralPopulation && ruralGrowthRate > 0 )
+	if (ProvinceToUpdate->ruralPopulation >= ProvinceToUpdate->maxRuralPopulation && ruralGrowthRate > 0)
 	{
-		ProvinceToUpdate->listOfUrbanGrowthModifiers[2].GrowthModiferValue = ruralGrowthRate;
+		ProvinceToUpdate->listOfUrbanPopGrowthModifiers[2].GrowthModiferValue = ruralGrowthRate;
 	}
 	else //If not max pop
 	{
 		double pop = ProvinceToUpdate->ruralPopulation;
-		ProvinceToUpdate->ruralPopulation = int (pop * (1 + ruralGrowthRate / 100) );
+		ProvinceToUpdate->ruralPopulation = int(pop * (1 + ruralGrowthRate / 100));
 	}
 	//If we hit the max afterwards, set to max.
-	if (ProvinceToUpdate->ruralPopulation > ProvinceToUpdate->maxRuralPopulation) 
+	if (ProvinceToUpdate->ruralPopulation > ProvinceToUpdate->maxRuralPopulation)
 	{
 		ProvinceToUpdate->ruralPopulation = ProvinceToUpdate->maxRuralPopulation;
 	}
+	//If we hit zero rural pop, set to 1.
+	if (ProvinceToUpdate->urbanPopulation < 1)
+		ProvinceToUpdate->urbanPopulation = 1;
 
 	//Insert war and building effects here.
 
 	//Add all factors to urban growth rate.
 	for (int i = 0; i < 4; i++)
-		urbanGrowthRate += ProvinceToUpdate->listOfUrbanGrowthModifiers[i].GrowthModiferValue;
+		urbanGrowthRate += ProvinceToUpdate->listOfUrbanPopGrowthModifiers[i].GrowthModiferValue;
+
 	if (ProvinceToUpdate->urbanPopulation < ProvinceToUpdate->maxUrbanPopulation)
 	{
 		double pop = ProvinceToUpdate->urbanPopulation;
@@ -731,6 +758,159 @@ int MasterBoard::updateProvince(int input)
 	{
 		ProvinceToUpdate->urbanPopulation = ProvinceToUpdate->maxUrbanPopulation;
 	}
+	//If we hit zero urban pop, set to 1.
+	if (ProvinceToUpdate->urbanPopulation < 1)
+		ProvinceToUpdate->urbanPopulation = 1;
 
 	return 0;
 }
+
+int MasterBoard::updateProvinceWealth(int input)
+{
+	province* ProvinceToUpdate = &listOfProvinces[input];
+
+	//Update rural wealth first.
+	ProvinceToUpdate->ruralWealth = ProvinceToUpdate->ruralPopulation;
+
+	//Then update provincial growth modifiers.  
+	int urbanGrowthRate = 0;
+	//Add all factors to find urban growth rate.
+	for (int i = 0; i < 4; i++)
+		urbanGrowthRate += ProvinceToUpdate->listOfUrbanPopGrowthModifiers[i].GrowthModiferValue;
+
+	//UrbanWealth 1 is pop growth.
+	ProvinceToUpdate->listOfUrbanWealthGrowthModifiers[1].GrowthModiferValue = urbanGrowthRate;
+
+	//UrbanWealth 2 is tech bonus
+	ProvinceToUpdate->listOfUrbanWealthGrowthModifiers[2].GrowthModiferValue = techLevelWealthBonus[ProvinceToUpdate->provinceTechLevel];
+
+	//UrbanWealth 3 is number of trade routes
+	ProvinceToUpdate->listOfUrbanWealthGrowthModifiers[3].GrowthModiferValue = ProvinceToUpdate->tradeRoutes.size();
+
+		//Insert war and building effects here.
+
+		//Then add all factors to urban growth rate.
+	int urbanWealthGrowthRate = 0;
+	for (int i = 0; i < 4; i++)
+		urbanWealthGrowthRate += ProvinceToUpdate->listOfUrbanWealthGrowthModifiers[i].GrowthModiferValue;
+
+	//Then multiply growth by previous wealth amount
+	double wealth = ProvinceToUpdate->urbanWealth;
+	ProvinceToUpdate->urbanWealth = int(wealth * (1 + urbanWealthGrowthRate / 100));
+
+	//If we hit zero urban wealth, set to 1.
+	if (ProvinceToUpdate->urbanWealth < 1)
+		ProvinceToUpdate->urbanWealth = 1;
+
+	return 0;
+}
+
+/*For all provinces
+for each tile in a province's listOfTiles array,
+	check each neighboring square.
+		up/down/left/right
+		if that neighbor is not the same province,
+			go through provinceConnections array and see if it's already listed.
+			if not, add to the list.
+*/
+
+//Assumes existence of ProvinceToInitialize->connectionsList[]
+
+int MasterBoard::initializeProvinceConnections(int i)
+{
+	province * ProvinceToInitialize = &listOfProvinces[i];
+
+	for (int k = 0; k < ProvinceToInitialize->listOfTiles.size(); k++)
+	{
+		int x = ProvinceToInitialize->listOfTiles[k].XCoord;
+		int y = ProvinceToInitialize->listOfTiles[k].YCoord;
+
+		//If adjacent tile is not same province, see if it's already been added to connexList
+		// If not, add it.
+		if (x > 0 && Board[x - 1][y].province != Board[x][y].province)	//
+		{
+			bool alreadyAdded = false;
+			for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+			{
+				if (ProvinceToInitialize->connectionsList[n] == Board[x - 1][y].province)
+					alreadyAdded = true;
+			}
+			if (alreadyAdded == false)
+			{
+				ProvinceToInitialize->connectionsList.emplace_back(Board[x - 1][y].province);
+			}
+		}
+		if (y > 0 && Board[x][y - 1].province != Board[x][y].province)
+		{
+			bool alreadyAdded = false;
+			for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+			{
+				if (ProvinceToInitialize->connectionsList[n] == Board[x][y - 1].province)
+					alreadyAdded = true;
+			}
+			if (alreadyAdded == false)
+			{
+				ProvinceToInitialize->connectionsList.emplace_back(Board[x][y - 1].province);
+			}
+		}
+		if (x < BOARD_WIDTH - 1 && Board[x + 1][y].province != Board[x][y].province)
+		{
+			bool alreadyAdded = false;
+			for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+			{
+				if (ProvinceToInitialize->connectionsList[n] == Board[x + 1][y].province)
+					alreadyAdded = true;
+			}
+			if (alreadyAdded == false)
+			{
+				ProvinceToInitialize->connectionsList.emplace_back(Board[x + 1][y].province);
+			}
+		}
+		if (y < BOARD_HEIGHT - 1 && Board[x][y + 1].province != Board[x][y].province)
+		{
+			bool alreadyAdded = false;
+			for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+			{
+				if (ProvinceToInitialize->connectionsList[n] == Board[x][y + 1].province)
+					alreadyAdded = true;
+			}
+			if (alreadyAdded == false)
+			{
+				ProvinceToInitialize->connectionsList.emplace_back(Board[x][y + 1].province);
+			}
+		}
+
+
+	}
+
+	return 0;
+}
+
+int MasterBoard::initializeProvinceTradeRoutes(int provinceNumber)
+{
+	province* ProvinceToInitialize = &listOfProvinces[provinceNumber];
+
+	//At game start only provinces neighboring AND part of same country have trade routes.
+	for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+	{
+		int neighbor = ProvinceToInitialize->connectionsList[n];
+		if (neighbor != 0   //Can't be sea province
+			&& listOfProvinces[neighbor].controller == ProvinceToInitialize->controller)   //Is it same country
+		{
+			ProvinceToInitialize->tradeRoutes.emplace_back(neighbor); //Add that province number to the trade routes list
+		}
+	}
+
+	return 0;
+}
+
+
+int updateProvinceTradeRoutes()
+{
+	//Go through connections list.
+	//If neighboring province has trade agreement, check if trade route already established, and add if not.
+	//If NO trade agreement, make sure the trade route is eliminated if it existed previously.
+	return 0;
+
+}
+

@@ -1,2 +1,48 @@
-﻿  mainmenu.cpp
+﻿  MasterBoard.cpp
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(129,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(139,9): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(140,9): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(158,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(159,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(172,48): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(172,48): warning C4244:         with
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(172,48): warning C4244:         [
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(172,48): warning C4244:             _Ty=int
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(172,48): warning C4244:         ]
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(246,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(247,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(305,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(356,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(477,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(491,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(515,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(516,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(531,10): warning C4244:  'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(545,54): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(545,54): warning C4244:         with
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(545,54): warning C4244:         [
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(545,54): warning C4244:             _Ty=int
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(545,54): warning C4244:         ]
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(556,52): warning C4244:  '-=': conversion from 'double' to '_Ty', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(556,52): warning C4244:         with
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(556,52): warning C4244:         [
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(556,52): warning C4244:             _Ty=int
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(556,52): warning C4244:         ]
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(631,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(638,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(661,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(666,116): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(672,116): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(676,72): warning C4244:  '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(677,102): warning C4244:  '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(779,91): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(795,100): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(823,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(833,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(846,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(859,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(872,22): warning C4018:  '<': signed/unsigned mismatch
+  Tile.cpp
+  Generating Code...
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(894,20): warning C4018:  '<': signed/unsigned mismatch
   mapMaker.vcxproj -> C:\Users\Cazimir Park\source\repos\mapMaker\Debug\mapMaker.exe

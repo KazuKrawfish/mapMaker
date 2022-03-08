@@ -24,7 +24,7 @@ class inputLayer
 {
 public:
 
-	inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour, std::vector <sf::Sound>* inputSoundEffects );
+	inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::Texture* gameTexture, sf::Font* cour );
 	
 
 	//Print Whole Screen
@@ -47,9 +47,6 @@ public:
 	mainMenu* MainMenu;
 
 	//SFML Objects		/////////////////////////
-	std::vector <sf::Sound> * soundEffects;
-	bool soundsOn = false;
-	int speedFactor = 5;		//1 is normal. 10 is ultra fast.
 	sf::Texture* inputLayerTexture;
 	sf::Font* inputLayerFont;
 	sf::RenderWindow* inputLayerWindow;
