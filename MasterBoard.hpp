@@ -18,6 +18,8 @@ class inputLayer;
 //class province;
 class tile;
 
+enum techGroup { Western, Eastern, Natives };
+
 //Max window size is the physical size of the window:
 const int MAX_WINDOW_HEIGHT = 14;
 const int MAX_WINDOW_WIDTH = 15;
@@ -34,13 +36,19 @@ struct country
 	{
 		name = "UNKNOWN";
 		nationalPopulation = 0;
+		nationalWealth = 0;
 		listOfControlledProvinces.clear();
+		tradeAgreements.clear();
+		nationalTechGroup = Natives;
 
 	}
 	std::string name;
 	std::vector <int> listOfControlledProvinces;
+	std::vector <int> tradeAgreements;
+
 	int nationalPopulation = 0;
 	int nationalWealth = 0;
+	techGroup nationalTechGroup = Natives;
 
 };
 
@@ -63,6 +71,8 @@ public:
 	//Political//////////////////
 	std::vector <country> listOfCountries;
 	std::vector<province> listOfProvinces;
+
+
 	int initializeAllProvinces();
 	int initializeProvincePopulation(int input);
 	int initializeProvinceWealth(int input);
@@ -71,6 +81,7 @@ public:
 	//Political//////////////////
 	int updateProvinceWealth(int i);
 	int updateProvincePopulation(int i);
+	int	updateProvinceTechLevel(int inputProvince);
 
 
 	//MAP GENERATION/////////////////
@@ -100,7 +111,10 @@ public:
 
 	int advanceTurn();
 	int updateAllProvinces();
+	int updateAllCountries();
 	int updateProvince(int input);
+	int updateTradeRoutes(int firstCountry, int secondCountry);
+	int updateCountryTrade(int input);
 
 
 

@@ -6,7 +6,7 @@
 #include <iostream>
 
 enum techLevel: int { PreIndustrial = 1, Industrial = 2, Mechanized = 3, Modern  = 4};
-enum techGroup  {Western, Eastern, Natives};
+
 
 //The zero value here is garbage.
 const double techLevelAgriBonus[5] = {-100, 1,2,3,4 };
@@ -60,7 +60,6 @@ public:
 		tradeRoutes.clear();
 
 		provinceTechLevel = Industrial;
-		techGroup provinceTechGroup = Natives;
 
 	}
 
@@ -98,13 +97,14 @@ public:
 	int urbanWealth = 0;
 
 	techLevel provinceTechLevel = Industrial;
-	techGroup provinceTechGroup = Natives;
+	
+	double techAdvanceScore = 0;
+	
 	std::string name;
 	int controller = 0;
 	
 	std::vector <xyCoord> listOfTiles;
 
-	int updateProvinceTechLevel();
 	int updateProvincePopulation();
 
 };

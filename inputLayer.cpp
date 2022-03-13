@@ -243,7 +243,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Precip/Temp////////////////
 		
 		//Other turn data
-		snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %d\nTurn: %d\n", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel) , boardToPrint->listOfProvinces[myProvince].provinceTechGroup, boardToPrint->gameTurn);
+		snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %d\nTurn: %d\n", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel) , boardToPrint->listOfCountries[boardToPrint->listOfProvinces[myProvince].controller].nationalTechGroup, boardToPrint->gameTurn);
 		tileDescription += buffer;
 
 		sf::Text newText(tileDescription, *inputLayerFont, MainMenu->menuTextSize);

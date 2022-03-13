@@ -56,33 +56,3 @@ int province::updateProvincePopulation()
 
 
 }
-
-int province::updateProvinceTechLevel()
-{
-
-	//For now it's random.
-	int techAdvanceChance = rand() % 100;
-	if ( (provinceTechGroup == Western && techAdvanceChance < 10)
-	|| ( provinceTechGroup == Eastern && techAdvanceChance < 5 ))
-	{
-		if (provinceTechLevel != Modern)
-		{
-			provinceTechLevel = techLevel(provinceTechLevel + 1);
-			std::cout << name << " advanced to tech level: " << provinceTechLevel << std::endl;
-		
-			//If province advances tech level, update the max population for rural and urban.
-			double ruralChangeRatio = techLevelAgriBonus[provinceTechLevel] / techLevelAgriBonus[provinceTechLevel - 1];
-			//std::cout << maxRuralPopulation << std::endl;
-			maxRuralPopulation = ruralChangeRatio * maxRuralPopulation;
-			//std::cout << maxRuralPopulation << std::endl;
-
-		}
-	}
-
-	
-
-
-
-	return 0;
-
-}

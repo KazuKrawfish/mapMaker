@@ -692,6 +692,7 @@ int MasterBoard::initializeProvinceWealth(int input)
 
 int MasterBoard::advanceTurn()
 {
+	updateAllCountries();
 	updateAllProvinces();
 	gameTurn++;
 	return 0;
@@ -905,12 +906,117 @@ int MasterBoard::initializeProvinceTradeRoutes(int provinceNumber)
 }
 
 
-int updateProvinceTradeRoutes()
+int MasterBoard::updateAllCountries()
 {
-	//Go through connections list.
-	//If neighboring province has trade agreement, check if trade route already established, and add if not.
-	//If NO trade agreement, make sure the trade route is eliminated if it existed previously.
+	for (int i = 1; i < listOfCountries.size() + 1; i++)
+	{
+		//Must be valid country with at least 1 province
+		if (listOfCountries[i].listOfControlledProvinces.size() > 0)
+		{
+			updateCountryTrade(i);
+		}
+	}
+	return 0;
+}
+
+int MasterBoard::updateCountryTrade(int input)
+{
+	country* myCountry = &listOfCountries[input];
+
+	//Chances of forming or eliminating trade agreements
+	//Go through each country number and attempt to make/break trade agreements
+	for (int i = 1; i < listOfCountries.size() + 1; i++)
+	{
+		int chance = rand() % 100;
+
+		if (chance > 95) //5% chance of making agreement
+		{
+			//Check if a given country already has a trade agreement with us
+			bool alreadyTrading = false;
+			for (int k = 0; k < listOfCountries[i].tradeAgreements.size(); k++)
+			{
+				if (listOfCountries[i].tradeAgreements[k] == i)
+				{
+					alreadyTrading = true;
+				}
+			}
+
+			//If they have at least one province and we don't have an agreement yet, make an agreement.
+			if (alreadyTrading == false && listOfCountries[i].listOfControlledProvinces.size() > 0)
+			{
+				//Update both countrys' lists
+				myCountry->tradeAgreements.emplace_back(i);
+				listOfCountries[i].tradeAgreements.emplace_back(input);
+				updateTradeRoutes(input, i);
+			}
+		}
+		else
+		if (chance < 2) //2% chance of breaking agreement
+		{
+			//Create breakAgreement() function
+		}
+
+
+	}
+	return 0;
+}
+
+int MasterBoard::updateTradeRoutes(int firstCountry, int secondCountry)
+{
+	for (int x = 0; x < listOfCountries[firstCountry].listOfControlledProvinces.size(); x++)
+		for (int y = 0; y < listOfCountries[secondCountry].listOfControlledProvinces.size(); y++)
+		{
+			if (connectionsList		//Must be connected ... check connex list 	)
+				//If connected, add trade route to each province.
+				listOfCountries[firstCountry].listOfControlledProvinces[x].tradeRoutes.emplace_back(listOfCountries[secondCountry].listOfControlledProvinces[y]);
+		}
+}
+
+int MasterBoard::updateProvinceTechLevel(int inputProvince)
+{
+	province* provToUpdate = &listOfProvinces[inputProvince];
+
+	//Everyone has a 1% base increase to advance percentage.
+	double percentIncrease = 0.1;
+
+	if (listOfCountries[provToUpdate->controller].nationalTechGroup == Western)
+	{
+		percentIncrease += 0.4;
+	}
+	else if (listOfCountries[provToUpdate->controller].nationalTechGroup == Eastern)
+	{
+		percentIncrease += 0.2;
+	}
+
+	//Tech boost for each trade partner province: 0.1*Tech level
+	for (int k = 0; k < provToUpdate->tradeRoutes.size(); k++)
+	{
+		percentIncrease += 0.1 * int(listOfProvinces[provToUpdate->tradeRoutes[k]].provinceTechLevel);
+	}
+
+	provToUpdate->techAdvanceScore += percentIncrease;
+
+	int advanceChance = rand() % 100;
+
+	if (advanceChance < provToUpdate->techAdvanceScore)
+	{
+		if (provToUpdate->provinceTechLevel != Modern)
+		{
+			provToUpdate->provinceTechLevel = techLevel(provToUpdate->provinceTechLevel + 1);
+			std::cout << provToUpdate->name << " advanced to tech level: " << provToUpdate->provinceTechLevel << std::endl;
+
+			//If province advances tech level, update the max population for rural.
+			//Urban max is based on CURRENT rural, so no update.
+			double ruralChangeRatio = techLevelAgriBonus[provToUpdate->provinceTechLevel] / techLevelAgriBonus[provToUpdate->provinceTechLevel - 1];
+			provToUpdate->maxRuralPopulation = ruralChangeRatio * provToUpdate->maxRuralPopulation;
+
+		}
+	}
+
+
+
+
+
 	return 0;
 
 }
-
