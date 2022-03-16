@@ -947,13 +947,32 @@ int MasterBoard::updateCountryTrade(int input)
 				//Update both countrys' lists
 				myCountry->tradeAgreements.emplace_back(i);
 				listOfCountries[i].tradeAgreements.emplace_back(input);
-				updateTradeRoutes(input, i);
+				addTradeRoutes(input, i);
 			}
 		}
 		else
 		if (chance < 2) //2% chance of breaking agreement
-		{
-			//Create breakAgreement() function
+		{			
+			//Check if a given country already has a trade agreement with us
+			bool alreadyTrading = false;
+			for (int k = 0; k < listOfCountries[i].tradeAgreements.size(); k++)
+			{
+				if (listOfCountries[i].tradeAgreements[k] == i)
+				{
+					alreadyTrading = true;
+				}
+			}
+
+			//If they have at least one province and we don't have an agreement yet, make an agreement.
+			if (alreadyTrading == true && listOfCountries[i].listOfControlledProvinces.size() > 0)
+			{
+				//Update both countrys' lists
+				myCountry->tradeAgreements.emplace_back(i);
+				listOfCountries[i].tradeAgreements.emplace_back(input);
+
+
+				breakTradeRoutes(input, i);
+			}
 		}
 
 
@@ -961,7 +980,56 @@ int MasterBoard::updateCountryTrade(int input)
 	return 0;
 }
 
-int MasterBoard::updateTradeRoutes(int firstCountry, int secondCountry)
+int MasterBoard::addTradeRoutes(int firstCountry, int secondCountry)
+{
+	//Go through each province pairing between the two countries
+	for (int x = 0; x < listOfCountries[firstCountry].listOfControlledProvinces.size(); x++)
+	{
+		int firstProvince = listOfCountries[firstCountry].listOfControlledProvinces[x];
+
+		for (int y = 0; y < listOfCountries[secondCountry].listOfControlledProvinces.size(); y++)
+		{
+			
+			int secondProvince = listOfCountries[secondCountry].listOfControlledProvinces[y];
+
+			//For a given province pairing, see if it contains the other province in its connections list. Should be vice versa too.
+			for (int i = 0; i < listOfProvinces[secondProvince].connectionsList.size(); i++) 
+			{
+				if (listOfProvinces[secondProvince].connectionsList[i] == firstProvince)
+				{
+					//First verify that trade route doesn't already exist
+					bool tradeRouteAlready = false;
+					for (int n = 0; n < listOfProvinces[secondProvince].tradeRoutes.size(); n++)
+					{
+						if (listOfProvinces[secondProvince].tradeRoutes[n] == firstProvince)
+							tradeRouteAlready = true;
+					}
+
+					//If no previous trade route, add province trade routes.
+					if(tradeRouteAlready == false)
+						listOfProvinces[secondProvince].tradeRoutes.push_back(firstProvince);
+				}
+				//Verify for the other direction and add that route.
+				if (listOfProvinces[firstProvince].connectionsList[i] == secondProvince)
+				{
+					//First verify that trade route doesn't already exist
+					bool tradeRouteAlready = false;
+					for (int n = 0; n < listOfProvinces[firstProvince].tradeRoutes.size(); n++)
+					{
+						if (listOfProvinces[firstProvince].tradeRoutes[n] == secondProvince)
+							tradeRouteAlready = true;
+					}
+
+					//If no previous trade route, add province trade routes.
+					if (tradeRouteAlready == false)
+						listOfProvinces[firstProvince].tradeRoutes.push_back(secondProvince);
+				}
+			}
+		}
+	}
+}
+
+int MasterBoard::breakTradeRoutes(int firstCountry, int secondCountry)
 {
 	for (int x = 0; x < listOfCountries[firstCountry].listOfControlledProvinces.size(); x++)
 		for (int y = 0; y < listOfCountries[secondCountry].listOfControlledProvinces.size(); y++)

@@ -112,8 +112,8 @@ public:
 	int advanceTurn();
 	int updateAllProvinces();
 	int updateAllCountries();
-	int updateProvince(int input);
-	int updateTradeRoutes(int firstCountry, int secondCountry);
+	int addTradeRoutes(int firstCountry, int secondCountry);
+	int breakTradeRoutes(int firstCountry, int secondCountry);
 	int updateCountryTrade(int input);
 
 
