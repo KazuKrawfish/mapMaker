@@ -339,8 +339,8 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 	if (selectedProvince != 0)
 		nameOfProvince = boardToPrint->listOfProvinces[selectedProvince].name;
 
-	char buffer[200];
-	snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
+	char buffer[400];
+	snprintf(buffer, 400, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
 	provinceDescription += buffer;
 
 
@@ -367,11 +367,23 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 	int totalWealth = urbanWealth + boardToPrint->listOfProvinces[selectedProvince].ruralWealth;
 	int totalWealthGrowth = (urbanWealth * urbanWealthGrowthRate + boardToPrint->listOfProvinces[selectedProvince].ruralWealth * ruralGrowthRate) / totalWealth;
 
-	snprintf(buffer, 200, "\nRural Population:\n%dRurGrowth: %d\nUrban Population:\nUrbGrowth: %d\n%d\nNational Population:\n%d\nUrban Wealth:\n%d\nGrowth:\n%d\n",
+	snprintf(buffer, 400, "\nRural Population:\n%dRurGrowth: %d\nUrban Population:\nUrbGrowth: %d\n%d\nNational Population:\n%d\nUrban Wealth:\n%d\nGrowth:\n%d\n",
 		ruralPopulation, ruralGrowthRate, urbanPopulation, urbanGrowthRate, nationalPopulation, urbanWealth, urbanWealthGrowthRate);
 	provinceDescription += buffer;
 
-
+	//Report trade status based on provinces
+	for (int i = 0; i < boardToPrint->listOfProvinces[selectedProvince].tradeRoutes.size(); i++)
+	{
+		int provinceTradingWith = boardToPrint->listOfProvinces[selectedProvince].tradeRoutes[i];
+		snprintf(buffer, 400, "Trading with %s\(%s\)\n", boardToPrint->listOfProvinces[provinceTradingWith].name.c_str(), boardToPrint->listOfCountries[boardToPrint->listOfProvinces[provinceTradingWith].controller].name.c_str());
+		provinceDescription += buffer;
+	}
+	for (int i = 0; i <	boardToPrint->listOfCountries[myController].tradeAgreements.size()  ; i++)
+	{
+		int countryTradingWith = boardToPrint->listOfCountries[myController].tradeAgreements[i];
+		snprintf(buffer, 400, "%s is trading with country %s\n", myControllerName.c_str(), boardToPrint->listOfCountries [countryTradingWith].name.c_str()  );
+		provinceDescription += buffer;
+	}
 
 	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);
 

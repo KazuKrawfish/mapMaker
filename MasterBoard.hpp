@@ -113,6 +113,7 @@ public:
 	int updateAllProvinces();
 	int updateAllCountries();
 	int addTradeRoutes(int firstCountry, int secondCountry);
+	int attemptProvincePairAddTradeRoutes(int firstProvince, int secondProvince);
 	int breakTradeRoutes(int firstCountry, int secondCountry);
 	int updateCountryTrade(int input);
 

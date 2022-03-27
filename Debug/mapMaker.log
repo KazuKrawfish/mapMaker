@@ -35,14 +35,20 @@ C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(666,116): w
 C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(672,116): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
 C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(676,72): warning C4244:  '=': conversion from 'double' to 'int', possible loss of data
 C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(677,102): warning C4244:  '=': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(779,91): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(795,100): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(823,20): warning C4018:  '<': signed/unsigned mismatch
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(833,22): warning C4018:  '<': signed/unsigned mismatch
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(846,22): warning C4018:  '<': signed/unsigned mismatch
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(859,22): warning C4018:  '<': signed/unsigned mismatch
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(872,22): warning C4018:  '<': signed/unsigned mismatch
-  Tile.cpp
-  Generating Code...
-C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(894,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(780,91): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(796,100): warning C4244:  '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(824,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(834,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(847,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(860,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(873,22): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(895,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(907,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(924,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(975,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(981,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(1049,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(1050,21): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(1078,20): warning C4018:  '<': signed/unsigned mismatch
+C:\Users\Cazimir Park\source\repos\mapMaker\mapMaker\MasterBoard.cpp(1097,56): warning C4244:  '=': conversion from 'double' to 'int', possible loss of data
   mapMaker.vcxproj -> C:\Users\Cazimir Park\source\repos\mapMaker\Debug\mapMaker.exe

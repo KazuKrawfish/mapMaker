@@ -890,16 +890,12 @@ int MasterBoard::initializeProvinceConnections(int i)
 int MasterBoard::initializeProvinceTradeRoutes(int provinceNumber)
 {
 	province* ProvinceToInitialize = &listOfProvinces[provinceNumber];
-
-	//At game start only provinces neighboring AND part of same country have trade routes.
-	for (int n = 0; n < ProvinceToInitialize->connectionsList.size(); n++)
+	
+	//Attempt to make trade routes for each province within the nation to this province.
+	for (int n = 0; n < listOfCountries[ProvinceToInitialize->controller].listOfControlledProvinces.size(); n++)
 	{
-		int neighbor = ProvinceToInitialize->connectionsList[n];
-		if (neighbor != 0   //Can't be sea province
-			&& listOfProvinces[neighbor].controller == ProvinceToInitialize->controller)   //Is it same country
-		{
-			ProvinceToInitialize->tradeRoutes.emplace_back(neighbor); //Add that province number to the trade routes list
-		}
+		int secondProvince = listOfCountries[ProvinceToInitialize->controller].listOfControlledProvinces[n];
+		attemptProvincePairAddTradeRoutes(provinceNumber, secondProvince);
 	}
 
 	return 0;
@@ -908,7 +904,7 @@ int MasterBoard::initializeProvinceTradeRoutes(int provinceNumber)
 
 int MasterBoard::updateAllCountries()
 {
-	for (int i = 1; i < listOfCountries.size() + 1; i++)
+	for (int i = 1; i < listOfCountries.size() - 1; i++)
 	{
 		//Must be valid country with at least 1 province
 		if (listOfCountries[i].listOfControlledProvinces.size() > 0)
@@ -925,56 +921,49 @@ int MasterBoard::updateCountryTrade(int input)
 
 	//Chances of forming or eliminating trade agreements
 	//Go through each country number and attempt to make/break trade agreements
-	for (int i = 1; i < listOfCountries.size() + 1; i++)
+	for (int i = 1; i < listOfCountries.size() - 1; i++)
 	{
 		int chance = rand() % 100;
-
-		if (chance > 95) //5% chance of making agreement
+		if (myCountry != &listOfCountries[i]) 
 		{
-			//Check if a given country already has a trade agreement with us
-			bool alreadyTrading = false;
-			for (int k = 0; k < listOfCountries[i].tradeAgreements.size(); k++)
+			if (chance > 95) //5% chance of making agreement
 			{
-				if (listOfCountries[i].tradeAgreements[k] == i)
+				//Check if we already have a trade agreement with a given country.
+				std::vector<int>::iterator foundCountry;
+				foundCountry = std::find(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
+
+				//If they have at least one province and we don't have an agreement yet, make an agreement.
+				if (foundCountry == myCountry->tradeAgreements.end() && listOfCountries[i].listOfControlledProvinces.size() > 0)
 				{
-					alreadyTrading = true;
+					//Update both countrys' lists
+					myCountry->tradeAgreements.emplace_back(i);
+					listOfCountries[i].tradeAgreements.emplace_back(input);
+					addTradeRoutes(input, i);
+
+					std::cout << myCountry->name << " made a trade agreement with " << listOfCountries[i].name << std::endl;
 				}
 			}
-
-			//If they have at least one province and we don't have an agreement yet, make an agreement.
-			if (alreadyTrading == false && listOfCountries[i].listOfControlledProvinces.size() > 0)
-			{
-				//Update both countrys' lists
-				myCountry->tradeAgreements.emplace_back(i);
-				listOfCountries[i].tradeAgreements.emplace_back(input);
-				addTradeRoutes(input, i);
-			}
-		}
-		else
-		if (chance < 2) //2% chance of breaking agreement
-		{			
-			//Check if a given country already has a trade agreement with us
-			bool alreadyTrading = false;
-			for (int k = 0; k < listOfCountries[i].tradeAgreements.size(); k++)
-			{
-				if (listOfCountries[i].tradeAgreements[k] == i)
+			else
+				if (chance < 2) //2% chance of breaking agreement
 				{
-					alreadyTrading = true;
+					//Verify if we already have a trade agreement with the country before we try to break.
+					std::vector<int>::iterator foundCountry;
+					foundCountry = std::find(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
+
+					//If they have at least one province and we do have an agreement, break it.
+					if (foundCountry != myCountry->tradeAgreements.end() && listOfCountries[i].listOfControlledProvinces.size() > 0)
+					{
+						//Update both countrys' lists
+						std::remove(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
+						std::remove(listOfCountries[i].tradeAgreements.begin(), listOfCountries[i].tradeAgreements.end(), input);
+
+						//Then break trade routes for individual provinces in both countries.
+						breakTradeRoutes(input, i);
+
+						std::cout << myCountry->name << " broke their trade agreement with " << listOfCountries[i].name << std::endl;
+					}
 				}
-			}
-
-			//If they have at least one province and we don't have an agreement yet, make an agreement.
-			if (alreadyTrading == true && listOfCountries[i].listOfControlledProvinces.size() > 0)
-			{
-				//Update both countrys' lists
-				myCountry->tradeAgreements.emplace_back(i);
-				listOfCountries[i].tradeAgreements.emplace_back(input);
-
-
-				breakTradeRoutes(input, i);
-			}
 		}
-
 
 	}
 	return 0;
@@ -982,62 +971,91 @@ int MasterBoard::updateCountryTrade(int input)
 
 int MasterBoard::addTradeRoutes(int firstCountry, int secondCountry)
 {
-	//Go through each province pairing between the two countries
+	//Go through each province in each country
 	for (int x = 0; x < listOfCountries[firstCountry].listOfControlledProvinces.size(); x++)
 	{
+
 		int firstProvince = listOfCountries[firstCountry].listOfControlledProvinces[x];
 
+		//Go through each province in each country
 		for (int y = 0; y < listOfCountries[secondCountry].listOfControlledProvinces.size(); y++)
 		{
-			
 			int secondProvince = listOfCountries[secondCountry].listOfControlledProvinces[y];
+			
+			attemptProvincePairAddTradeRoutes(firstProvince, secondProvince);
 
-			//For a given province pairing, see if it contains the other province in its connections list. Should be vice versa too.
-			for (int i = 0; i < listOfProvinces[secondProvince].connectionsList.size(); i++) 
-			{
-				if (listOfProvinces[secondProvince].connectionsList[i] == firstProvince)
-				{
-					//First verify that trade route doesn't already exist
-					bool tradeRouteAlready = false;
-					for (int n = 0; n < listOfProvinces[secondProvince].tradeRoutes.size(); n++)
-					{
-						if (listOfProvinces[secondProvince].tradeRoutes[n] == firstProvince)
-							tradeRouteAlready = true;
-					}
+		}
 
-					//If no previous trade route, add province trade routes.
-					if(tradeRouteAlready == false)
-						listOfProvinces[secondProvince].tradeRoutes.push_back(firstProvince);
-				}
-				//Verify for the other direction and add that route.
-				if (listOfProvinces[firstProvince].connectionsList[i] == secondProvince)
-				{
-					//First verify that trade route doesn't already exist
-					bool tradeRouteAlready = false;
-					for (int n = 0; n < listOfProvinces[firstProvince].tradeRoutes.size(); n++)
-					{
-						if (listOfProvinces[firstProvince].tradeRoutes[n] == secondProvince)
-							tradeRouteAlready = true;
-					}
+	}
 
-					//If no previous trade route, add province trade routes.
-					if (tradeRouteAlready == false)
-						listOfProvinces[firstProvince].tradeRoutes.push_back(secondProvince);
-				}
-			}
+	return 0;
+}
+
+int MasterBoard::attemptProvincePairAddTradeRoutes(int firstProvince, int secondProvince) 
+{
+
+	if (firstProvince == secondProvince)
+		return 1;
+
+	bool seaConnection = false;
+	//See if second country has a province bordering sea.
+	std::vector<int>::iterator foundSea1;
+	foundSea1 = std::find(listOfProvinces[firstProvince].connectionsList.begin(), listOfProvinces[firstProvince].connectionsList.end(), 0);
+	std::vector<int>::iterator foundSea2;
+	foundSea2 = std::find(listOfProvinces[secondProvince].connectionsList.begin(), listOfProvinces[secondProvince].connectionsList.end(), 0);
+
+
+	if (foundSea1 != listOfProvinces[firstProvince].connectionsList.end() && foundSea2 != listOfProvinces[secondProvince].connectionsList.end())
+		seaConnection = true;
+
+	//See if the two provinces have each other in their connectionsLists
+	std::vector<int>::iterator foundConnection1;
+	foundConnection1 = std::find(listOfProvinces[firstProvince].connectionsList.begin(), listOfProvinces[firstProvince].connectionsList.end(), secondProvince);
+	std::vector<int>::iterator foundConnection2;
+	foundConnection2 = std::find(listOfProvinces[secondProvince].connectionsList.begin(), listOfProvinces[secondProvince].connectionsList.end(), firstProvince);
+
+
+	bool landConnection = false;
+
+	if (foundConnection1 != listOfProvinces[firstProvince].connectionsList.end() && foundConnection2 != listOfProvinces[secondProvince].connectionsList.end())
+		landConnection = true;
+
+	if (seaConnection == true || landConnection == true)
+	{
+		//Verify that tradeRoute not already established.
+		std::vector<int>::iterator foundRoute;
+		foundRoute = std::find(listOfProvinces[firstProvince].tradeRoutes.begin(), listOfProvinces[firstProvince].tradeRoutes.end(), secondProvince);
+
+		if (foundRoute == listOfProvinces[firstProvince].tradeRoutes.end())
+		{
+			listOfProvinces[firstProvince].tradeRoutes.emplace_back(secondProvince);
+			std::cout << "\t" << listOfProvinces[firstProvince].name << " now trades with " << listOfProvinces[secondProvince].name << std::endl;
+		}
+
+		//Verify that tradeRoute not already established for the opposite province, and add if not.
+		foundRoute = std::find(listOfProvinces[secondProvince].tradeRoutes.begin(), listOfProvinces[secondProvince].tradeRoutes.end(), firstProvince);
+		if (foundRoute == listOfProvinces[secondProvince].tradeRoutes.end())
+		{
+			listOfProvinces[secondProvince].tradeRoutes.emplace_back(firstProvince);
+			std::cout << "\t" << listOfProvinces[secondProvince].name << " now trades with " << listOfProvinces[firstProvince].name << std::endl;
 		}
 	}
+	return 0;
 }
 
 int MasterBoard::breakTradeRoutes(int firstCountry, int secondCountry)
 {
+	//Go through list of provinces for the two countries and remove any trade routes that were listed between various provinces.
 	for (int x = 0; x < listOfCountries[firstCountry].listOfControlledProvinces.size(); x++)
 		for (int y = 0; y < listOfCountries[secondCountry].listOfControlledProvinces.size(); y++)
 		{
-			if (connectionsList		//Must be connected ... check connex list 	)
-				//If connected, add trade route to each province.
-				listOfCountries[firstCountry].listOfControlledProvinces[x].tradeRoutes.emplace_back(listOfCountries[secondCountry].listOfControlledProvinces[y]);
+			int firstProvince = listOfCountries[firstCountry].listOfControlledProvinces[x];
+			int secondProvince = listOfCountries[secondCountry].listOfControlledProvinces[y];
+			std::remove(listOfProvinces[firstProvince].tradeRoutes.begin(), listOfProvinces[firstProvince].tradeRoutes.end(), secondProvince);
+			std::remove(listOfProvinces[secondProvince].tradeRoutes.begin(), listOfProvinces[secondProvince].tradeRoutes.end(), firstProvince);
 		}
+
+	return 0;
 }
 
 int MasterBoard::updateProvinceTechLevel(int inputProvince)
