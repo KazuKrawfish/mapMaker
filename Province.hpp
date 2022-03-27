@@ -76,8 +76,8 @@ public:
 
 	growthModifiers listOfUrbanWealthGrowthModifiers[4] = { {"WarModifier", 0 },
 														{"UrbanPopGrowth",0 },
-														{"TechBonus", 0},
-														{"TradeRoutes", 0}  //(1,3, 5,10)
+														{"TechBonus", 0}, //(1,3, 5,10)
+														{"TradeRoutes", 0} 
 	};
 
 	//Describes the physical connections between provinces. 0 indicates sea connection.

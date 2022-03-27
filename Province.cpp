@@ -1,6 +1,6 @@
 #include "Province.hpp"
 
-
+/*
 int province::updateProvincePopulation() 
 {
 
@@ -56,3 +56,4 @@ int province::updateProvincePopulation()
 
 
 }
+*/

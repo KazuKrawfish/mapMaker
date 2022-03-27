@@ -740,10 +740,13 @@ int MasterBoard::updateProvincePopulation(int input)
 		ProvinceToUpdate->ruralPopulation = ProvinceToUpdate->maxRuralPopulation;
 	}
 	//If we hit zero rural pop, set to 1.
-	if (ProvinceToUpdate->urbanPopulation < 1)
-		ProvinceToUpdate->urbanPopulation = 1;
+	if (ProvinceToUpdate->ruralPopulation < 1)
+		ProvinceToUpdate->ruralPopulation = 1;
 
 	//Insert war and building effects here.
+
+	//First update urban max based on CURRENT rural pop.
+	ProvinceToUpdate->maxUrbanPopulation = ProvinceToUpdate->ruralPopulation * UrbanRuralRatio[ProvinceToUpdate->provinceTechLevel];
 
 	//Add all factors to urban growth rate.
 	for (int i = 0; i < 4; i++)

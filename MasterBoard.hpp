@@ -18,7 +18,7 @@ class inputLayer;
 //class province;
 class tile;
 
-enum techGroup { Western, Eastern, Natives };
+enum techGroup { Western = 0, Eastern = 1 , Natives = 2 };
 
 //Max window size is the physical size of the window:
 const int MAX_WINDOW_HEIGHT = 14;
@@ -49,6 +49,7 @@ struct country
 	int nationalPopulation = 0;
 	int nationalWealth = 0;
 	techGroup nationalTechGroup = Natives;
+	std::string techGroupNames[3] = { "Western", "Eastern", "Natives" };
 
 };
 
