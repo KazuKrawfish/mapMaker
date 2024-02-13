@@ -39,7 +39,15 @@ struct country
 		nationalWealth = 0;
 		listOfControlledProvinces.clear();
 		tradeAgreements.clear();
-		nationalTechGroup = Natives;
+		
+		//Assign tech groups randomly
+		int techChance = rand() % 100;
+		if (techChance > 80)
+			nationalTechGroup = Western;
+		else 
+		if (techChance > 50)
+			nationalTechGroup = Eastern;
+		else nationalTechGroup = Natives;
 
 	}
 	std::string name;
@@ -112,7 +120,9 @@ public:
 
 	int advanceTurn();
 	int updateAllProvinces();
-	int updateAllCountries();
+	int updateAllCountriesDiplo();
+	int updateAllCountriesTrade();
+	int updateAllCountriesPopulation();
 	int addTradeRoutes(int firstCountry, int secondCountry);
 	int attemptProvincePairAddTradeRoutes(int firstProvince, int secondProvince);
 	int breakTradeRoutes(int firstCountry, int secondCountry);

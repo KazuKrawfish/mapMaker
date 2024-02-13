@@ -44,7 +44,7 @@ std::vector <std::vector<sf::IntRect>> rectArray;
 int main()
 {
 
-	sf::RenderWindow mainWindow(sf::VideoMode(1800, 900), "Line of Command");
+	sf::RenderWindow mainWindow(sf::VideoMode(1800, 900), "Map Maker");
 
 	//Load textures
 	sf::Texture mainTexture;
