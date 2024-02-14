@@ -301,22 +301,26 @@ int MasterBoard::generateMap()
 	//Assign provinces randomly to countries
 	for (int i = 1; i < listOfProvinces.size(); i++)
 	{
-		int winnerCountry = 1 + rand() % numberOfCountries;
-		listOfProvinces[i].controller = winnerCountry;
-		listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
-		
-		*logStreamPointer << listOfCountries[winnerCountry].name << " takes control of " << listOfProvinces[i].name << std::endl;
-
-		//Assign new controller to each tile in province.
-		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++)
+		//Province must have some actual territory, otherwise it's dead
+		if (listOfProvinces.at(i).listOfTiles.size() > 1)
 		{
-			Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].controller = winnerCountry;
-		}
+			int winnerCountry = 1 + rand() % numberOfCountries;
+			listOfProvinces[i].controller = winnerCountry;
+			listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
 
-		//Update province's tech level based on national tech group
-		//If native, demote to pre-industrial, otherwise (Eastern or Western) keep Industrial
-		if (listOfCountries[winnerCountry].nationalTechGroup == Natives)
-			listOfProvinces[i].provinceTechLevel = PreIndustrial;
+			*logStreamPointer << listOfCountries[winnerCountry].name << " takes control of " << listOfProvinces[i].name << std::endl;
+
+			//Assign new controller to each tile in province.
+			for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++)
+			{
+				Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].controller = winnerCountry;
+			}
+
+			//Update province's tech level based on national tech group
+			//If native, demote to pre-industrial, otherwise (Eastern or Western) keep Industrial
+			if (listOfCountries[winnerCountry].nationalTechGroup == Natives)
+				listOfProvinces[i].provinceTechLevel = PreIndustrial;
+		}
 
 	}
 

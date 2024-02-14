@@ -44,7 +44,7 @@ public:
 
 	province()
 	{
-		numberOfSquares = 0;
+
 		ruralPopulation = 0;
 		urbanPopulation = 0;
 
@@ -86,7 +86,6 @@ public:
 	//Describes the province numbers that have a trade route with this province.
 	std::vector <int >tradeRoutes;
 
-	int numberOfSquares = 0;
 	int ruralPopulation = 0;
 	int urbanPopulation = 0;
 

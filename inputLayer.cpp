@@ -43,21 +43,9 @@ inputLayer::inputLayer(mainMenu* inputMainMenu, sf::RenderWindow* myWindow, sf::
 		for (int i = 7; i < numberOfCountries + 1; i++)
 		{
 			int prim = rand() % 3;
-
-			if (prim == 0)
-			{
-				politicalColors[i].r = 50 + i * 10;
-
-			}
-			if (prim == 1)
-			{
-				politicalColors[i].b = 50 + i * 10;
-			}
-			if (prim == 2)
-			{
-				politicalColors[i].g = 50 + i * 10;
-			}
-
+			politicalColors[i].r = rand() % 255;
+			politicalColors[i].b = rand() % 255;
+			politicalColors[i].g = rand() % 255;
 		}
 	}
 	//Increase transparency for political colors so we can highlight tiles
@@ -202,13 +190,14 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 
 	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * TILE_SIZE && mousePosition.y < boardToPrint->WINDOW_HEIGHT * TILE_SIZE)
 	{
+		std::string tileDescription;
+		char buffer[200];
 		//Description and Owner///////
 		int myController = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].controller;
 		int myProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
-		
-				
-		std::string myControllerName = "Neutral";		
-		
+
+		std::string myControllerName = "Neutral";
+
 		int myTechGroup = 0;
 		if (myController != 0)
 		{
@@ -218,16 +207,17 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 
 		std::string nameOfProvince = "";
 		if (myProvince != 0)
+		{
 			nameOfProvince = boardToPrint->listOfProvinces[myProvince].name;
 
-		char buffer[200];
-		snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
-		std::string tileDescription = buffer;
+			snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
+			tileDescription += buffer;
+		}
 		//Description and Owner//////
 
 		//ELEVATION//////////////////
 		int elevation = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].elevation;
-		snprintf(buffer,200, "\nElevation: %d", elevation);
+		snprintf(buffer, 200, "\nElevation: %d", elevation);
 		///	tileDescription += '\n';
 		//tileDescription += "Elevation: ";
 		tileDescription += buffer;
@@ -238,16 +228,26 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		int temp = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].temperature;
 		int urbanPopulation = boardToPrint->listOfProvinces[myProvince].urbanPopulation;
 		int ruralPopulation = boardToPrint->listOfProvinces[myProvince].ruralPopulation;
-		int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation ;
+		int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation;
 		int maxUrbanPop = boardToPrint->listOfProvinces[myProvince].maxUrbanPopulation;
 		int maxRuralPop = boardToPrint->listOfProvinces[myProvince].maxRuralPopulation;
 		std::string terrainDescription = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].description;
-		snprintf(buffer, 200, "\nTemperature: %d\nPrecipitation: %d\n%s\nRural Population(Max):\n%d\n(%d)\nUrban Population(Max): \n%d\n(%d)\nNational Population : \n%d", temp, precip, terrainDescription.c_str(), ruralPopulation, maxRuralPop, urbanPopulation, maxUrbanPop, nationalPopulation);
-		tileDescription += buffer;		
+		snprintf(buffer, 200, "\nTemperature: %d\nPrecipitation: %d\n%s", temp, precip, terrainDescription.c_str());
+		tileDescription += buffer;
+		if (myController != 0)		//Must be real country
+		{		
+			snprintf(buffer, 200, "\nRural Population(Max):\n%d\n(%d)\nUrban Population(Max): \n%d\n(%d)\nNational Population : \n%d", ruralPopulation, maxRuralPop, urbanPopulation, maxUrbanPop, nationalPopulation);
+			tileDescription += buffer;
+		}
 		//Precip/Temp////////////////
 		
 		//Other turn data
-		snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %s\nTurn: %d\n", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel) , boardToPrint->listOfCountries[myController].techGroupNames[myTechGroup].c_str()   ,  boardToPrint->gameTurn);
+		if (myController != 0)		//Must be real country
+		{
+			snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %s", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel), boardToPrint->listOfCountries[myController].techGroupNames[myTechGroup].c_str());
+			tileDescription += buffer;
+		}
+		snprintf(buffer, 200, "\nTurn: %d\n",  boardToPrint->gameTurn);
 		tileDescription += buffer;
 
 		sf::Text newText(tileDescription, *inputLayerFont, MainMenu->menuTextSize);
