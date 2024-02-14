@@ -3,6 +3,7 @@
 
 #include "Tile.hpp"
 #include <SFML/Audio.hpp>
+#include <fstream>
 
 class inputLayer;
 class MasterBoard;
@@ -45,6 +46,9 @@ public:
 
 	sf::Music* introMusic;
 	//SFML Objects end	/////////////////////////
+
+	std::ofstream logStream;
+	std::string logFileName = "history.log";
 
 
 };

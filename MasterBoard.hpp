@@ -59,6 +59,8 @@ struct country
 	techGroup nationalTechGroup = Natives;
 	std::string techGroupNames[3] = { "Western", "Eastern", "Natives" };
 
+	bool alive = true;
+
 };
 
 
@@ -69,7 +71,7 @@ public:
 	
 	int gameTurn = 0;
 
-	MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow);
+	MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow, std::ofstream* inputLogStream);
 	bool checkNeighbors(int x, int y);
 
 	//MAP GENERATION//////////////////
@@ -117,7 +119,7 @@ public:
 
 
 	//GAME MECHANICS//////////////////////////
-
+	int validateCountries();
 	int advanceTurn();
 	int updateAllProvinces();
 	int updateAllCountriesDiplo();
@@ -131,6 +133,9 @@ public:
 
 
 	//GAME MECHANICS//////////////////////////
+
+	//logging
+	std::ofstream* logStreamPointer;
 
 };
 

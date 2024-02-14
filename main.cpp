@@ -88,7 +88,7 @@ int main()
 	mainMenu MainMenu(&mainWindow, &mainTexture, &cour);
 	
 	inputLayer InputLayer(&MainMenu, &mainWindow , &mainTexture, &cour);
-	MasterBoard GameBoard(&mainTexture, &mainWindow);
+	MasterBoard GameBoard(&mainTexture, &mainWindow, &MainMenu.logStream);
 
 	MainMenu.playGame(&GameBoard, &InputLayer);
 

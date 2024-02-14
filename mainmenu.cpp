@@ -13,6 +13,8 @@ mainMenu::mainMenu(sf::RenderWindow* myWindow, sf::Texture* gameTexture , sf::Fo
 	myFont = cour;
 	mywindow = myWindow;
 
+	logStream.open(logFileName, std::ofstream::app);
+
 }
 
 int mainMenu::setCharacteristics(MasterBoard* LoadBoard)

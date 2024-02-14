@@ -9,7 +9,7 @@
 #include "inputLayer.hpp"
 #include "mainmenu.h"
 
-MasterBoard::MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow)
+MasterBoard::MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindow, std::ofstream* inputLogStream)
 {
 	gameTurn = 0;
 
@@ -25,6 +25,8 @@ MasterBoard::MasterBoard(sf::Texture* inputTexture, sf::RenderWindow* inputWindo
 	listOfCountries.resize(numberOfCountries + 1);
 
 	listOfProvinces.resize(numberOfProvinces + 1);
+
+	logStreamPointer = inputLogStream;
 
 	return;
 }
@@ -294,15 +296,19 @@ int MasterBoard::generateMap()
 		}
 	}
 
+	generateNames();
+
 	//Assign provinces randomly to countries
-	for (int i = 1; i < numberOfProvinces + 1; i++)
+	for (int i = 1; i < listOfProvinces.size(); i++)
 	{
 		int winnerCountry = 1 + rand() % numberOfCountries;
 		listOfProvinces[i].controller = winnerCountry;
 		listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
+		
+		*logStreamPointer << listOfCountries[winnerCountry].name << " takes control of " << listOfProvinces[i].name << std::endl;
 
 		//Assign new controller to each tile in province.
-		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
+		for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++)
 		{
 			Board[listOfProvinces[i].listOfTiles[k].XCoord][listOfProvinces[i].listOfTiles[k].YCoord].controller = winnerCountry;
 		}
@@ -314,12 +320,26 @@ int MasterBoard::generateMap()
 
 	}
 
-	generateNames();
+	validateCountries();
 
 	generatePrecipAndTemp();
 
 	myfile.close();\
 	return 0;
+}
+
+int MasterBoard::validateCountries() 
+{
+	//Turn off any countries that don't have any provinces
+	for (int i = 1; i < listOfCountries.size(); i++)
+		if (listOfCountries[i].listOfControlledProvinces.size() < 1)
+		{
+			*logStreamPointer << listOfCountries[i].name <<"(Number "<<i << ") has no provinces and is terminated" << std::endl;
+			listOfCountries[i].alive = false;
+		}
+
+	return 0;
+
 }
 
 int MasterBoard::generateNames()
@@ -638,16 +658,14 @@ int MasterBoard::initializeAllProvinces()
 			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].ruralPopulation;
 			listOfCountries[i].nationalPopulation += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].urbanPopulation;
 		}
-		std::cout << "National pop is" << listOfCountries[i].nationalPopulation << std::endl;
+		*logStreamPointer << "National pop is" << listOfCountries[i].nationalPopulation << std::endl;
 
 		for (int k = 0; k < listOfCountries[i].listOfControlledProvinces.size(); k++) 		//MAY BE ISSUE? 0 - size() inclusive enough?
 		{
 			listOfCountries[i].nationalWealth += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].urbanWealth;
 			listOfCountries[i].nationalWealth += listOfProvinces[listOfCountries[i].listOfControlledProvinces[k]].ruralWealth;
 		}
-		std::cout << "National wealth is" << listOfCountries[i].nationalWealth << std::endl;
-
-
+		*logStreamPointer << "National wealth is" << listOfCountries[i].nationalWealth << std::endl;
 	}
 
 	return 0;
@@ -697,6 +715,10 @@ int MasterBoard::initializeProvinceWealth(int input)
 
 int MasterBoard::advanceTurn()
 {
+	*logStreamPointer << "Turn " << gameTurn << std::endl;
+	*logStreamPointer << "*****************" << std::endl;
+	*logStreamPointer << "*****************" << std::endl<<std::endl<<std::endl;
+
 	updateAllCountriesDiplo();
 	updateAllCountriesTrade();
 	updateAllProvinces();
@@ -924,7 +946,7 @@ int MasterBoard::updateAllCountriesTrade()
 	for (int i = 1; i < listOfCountries.size() ; i++)
 	{
 		//Must be valid country with at least 1 province
-		if (listOfCountries[i].listOfControlledProvinces.size() > 0)
+		if (listOfCountries[i].alive == true)
 		{
 			updateCountryTrade(i);
 		}
@@ -938,7 +960,7 @@ int MasterBoard::updateAllCountriesPopulation()
 	for (int i = 1; i < listOfCountries.size(); i++)
 	{
 		//Must be valid country with at least 1 province
-		if (listOfCountries[i].listOfControlledProvinces.size() > 0)
+		if (listOfCountries[i].alive == true)
 		{
 			//Reset national population
 			listOfCountries[i].nationalPopulation = 0;
@@ -968,7 +990,7 @@ int MasterBoard::updateCountryTrade(int input)
 			int chance = rand() % 100;
 			if (myCountry != &listOfCountries[i])
 			{
-				std::cout << myCountry->name << "Trade roll: " << chance << std::endl;
+				*logStreamPointer << myCountry->name << "Trade roll: " << chance << std::endl;
 				if (chance > 95) //5% chance of making agreement
 				{
 					//Check if we already have a trade agreement with a given country.
@@ -976,7 +998,7 @@ int MasterBoard::updateCountryTrade(int input)
 					foundCountry = std::find(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
 
 					//If they have at least one province and we don't have an agreement yet, make an agreement.
-					if (foundCountry == myCountry->tradeAgreements.end() && listOfCountries[i].listOfControlledProvinces.size() > 0)
+					if (foundCountry == myCountry->tradeAgreements.end() && listOfCountries[i].alive == true)
 					{
 
 						//Update both countrys' lists
@@ -984,7 +1006,7 @@ int MasterBoard::updateCountryTrade(int input)
 						listOfCountries[i].tradeAgreements.emplace_back(input);
 						addTradeRoutes(input, i);
 
-						std::cout << myCountry->name << " made a trade agreement with " << listOfCountries[i].name << std::endl;
+						*logStreamPointer << myCountry->name << " made a trade agreement with " << listOfCountries[i].name << std::endl;
 					}
 				}
 				else
@@ -995,7 +1017,7 @@ int MasterBoard::updateCountryTrade(int input)
 						foundCountry = std::find(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
 
 						//If they have at least one province and we do have an agreement, break it.
-						if (foundCountry != myCountry->tradeAgreements.end() && listOfCountries[i].listOfControlledProvinces.size() > 0)
+						if (foundCountry != myCountry->tradeAgreements.end() && listOfCountries[i].alive == true)
 						{
 							//Update both countrys' lists
 							std::remove(myCountry->tradeAgreements.begin(), myCountry->tradeAgreements.end(), i);
@@ -1004,7 +1026,7 @@ int MasterBoard::updateCountryTrade(int input)
 							//Then break trade routes for individual provinces in both countries.
 							breakTradeRoutes(input, i);
 
-							std::cout << myCountry->name << " broke their trade agreement with " << listOfCountries[i].name << std::endl;
+							*logStreamPointer << myCountry->name << " broke their trade agreement with " << listOfCountries[i].name << std::endl;
 						}
 					}
 			}
@@ -1073,7 +1095,7 @@ int MasterBoard::attemptProvincePairAddTradeRoutes(int firstProvince, int second
 		if (foundRoute == listOfProvinces[firstProvince].tradeRoutes.end())
 		{
 			listOfProvinces[firstProvince].tradeRoutes.emplace_back(secondProvince);
-			std::cout << "\t" << listOfProvinces[firstProvince].name << " now trades with " << listOfProvinces[secondProvince].name << std::endl;
+			*logStreamPointer <<  listOfProvinces[firstProvince].name << " now trades with " << listOfProvinces[secondProvince].name << std::endl;
 		}
 
 		//Verify that tradeRoute not already established for the opposite province, and add if not.
@@ -1081,7 +1103,7 @@ int MasterBoard::attemptProvincePairAddTradeRoutes(int firstProvince, int second
 		if (foundRoute == listOfProvinces[secondProvince].tradeRoutes.end())
 		{
 			listOfProvinces[secondProvince].tradeRoutes.emplace_back(firstProvince);
-			std::cout << "\t" << listOfProvinces[secondProvince].name << " now trades with " << listOfProvinces[firstProvince].name << std::endl;
+			*logStreamPointer << listOfProvinces[secondProvince].name << " now trades with " << listOfProvinces[firstProvince].name << std::endl;
 		}
 	}
 	return 0;
@@ -1126,11 +1148,11 @@ int MasterBoard::updateProvinceTechLevel(int inputProvince)
 
 	provToUpdate->techAdvanceScore += percentIncrease;
 
-	std::cout << provToUpdate->name << " tech advance score: " << provToUpdate->techAdvanceScore ;
+	*logStreamPointer << provToUpdate->name << " tech advance score: " << provToUpdate->techAdvanceScore ;
 
 	int advanceChance = rand() % 100;
 
-	std::cout << " :: Advance roll: " << advanceChance << std::endl;
+	*logStreamPointer << " :: Advance roll: " << advanceChance << std::endl;
 
 
 	if (advanceChance < provToUpdate->techAdvanceScore)
@@ -1140,7 +1162,7 @@ int MasterBoard::updateProvinceTechLevel(int inputProvince)
 		if (provToUpdate->provinceTechLevel != Modern)
 		{
 			provToUpdate->provinceTechLevel = techLevel(provToUpdate->provinceTechLevel + 1);
-			std::cout << provToUpdate->name << " advanced to tech level: " << provToUpdate->provinceTechLevel << std::endl;
+			*logStreamPointer << provToUpdate->name << " advanced to tech level: " << provToUpdate->provinceTechLevel << std::endl;
 
 			//If province advances tech level, update the max population for rural.
 			//Urban max is based on CURRENT rural, so no update.
