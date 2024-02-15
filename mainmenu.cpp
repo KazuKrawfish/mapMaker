@@ -94,12 +94,23 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 					InputLayer->viewStatus = precipitationView;
 
 				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+				{
+
+					InputLayer->screen = worldDataScreen;
+
+				}
+				if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+				{
+
+					//boardToPlay->saveGame();
+					std::cout << "This currently doesn't do anything!!!!" << std::endl;
+
+				}
 				if(playerInput.type ==  playerInput.KeyReleased && playerInput.key.code == sf::Keyboard::N)
 				{
 
 					boardToPlay->advanceTurn();
-					//Clear the rest?
-
 
 				}
 				//If left mouse click
@@ -109,14 +120,14 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 					int successfulSelect = InputLayer->selectProvince(boardToPlay);
 					
 					if (successfulSelect == 0)
-						InputLayer->screen = dataScreen;
+						InputLayer->screen = provinceDataScreen;
 					else  InputLayer->screen = gameBoardScreen;
 				}
 
 				if(InputLayer->screen == gameBoardScreen)
 					boardToPlay->checkWindow();
 			}
-			else if (InputLayer->screen == dataScreen)
+			else if (InputLayer->screen == provinceDataScreen || InputLayer->screen == worldDataScreen)
 			{
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{

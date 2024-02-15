@@ -296,9 +296,13 @@ int inputLayer::printScreen(MasterBoard* boardToPrint, bool withinAnimation)
 		printUpperScreen(boardToPrint, withinAnimation);
 		printLowerScreen(boardToPrint);
 	}
-	else if (screen == dataScreen) 
+	else if (screen == provinceDataScreen) 
 	{
-		printDataScreen(boardToPrint);
+		printProvinceDataScreen(boardToPrint);
+	}
+	else if (screen == worldDataScreen)
+	{
+		printWorldDataScreen(boardToPrint);
 	}
 
 	inputLayerWindow->display();
@@ -329,7 +333,7 @@ int inputLayer::selectProvince(MasterBoard* boardToPrint)
 }
 
 
-int inputLayer::printDataScreen(MasterBoard* boardToPrint)
+int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 {
 	int myController = boardToPrint->listOfProvinces[selectedProvince].controller;
 
@@ -421,6 +425,37 @@ int inputLayer::printDataScreen(MasterBoard* boardToPrint)
 
 	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);
 
+	newText.setPosition(10, 10);
+	inputLayerWindow->draw(newText);
+
+	return 0;
+}
+
+
+int inputLayer::printWorldDataScreen(MasterBoard* boardToPrint)
+{
+	char buffer[400];
+	std::string outputString;
+
+	snprintf(buffer, 400, "Country Name\tTotal Population\tTech Group\tNumber of Provinces\n");
+	outputString += buffer;
+
+	//Print summary of countries in the world
+	for (int i = 1; i < boardToPrint->listOfCountries.size(); i++)
+	{
+		country* myCountry = &boardToPrint->listOfCountries[i];
+		if (myCountry->alive == true)
+		{
+			snprintf(buffer, 400, "%s\t%d", myCountry->name.c_str(), myCountry->nationalPopulation);
+			outputString += buffer;
+			snprintf(buffer, 400, "\t%s",  myCountry->techGroupNames[myCountry->nationalTechGroup].c_str());
+			outputString += buffer;
+			snprintf(buffer, 400, "\t%d\n", myCountry->listOfControlledProvinces.size());
+			outputString += buffer;
+		}
+	}
+
+	sf::Text newText(outputString, *inputLayerFont, MainMenu->menuTextSize);
 	newText.setPosition(10, 10);
 	inputLayerWindow->draw(newText);
 

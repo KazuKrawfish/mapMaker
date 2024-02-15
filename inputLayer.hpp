@@ -8,7 +8,7 @@ class MasterBoard;
 class mainMenu;
 
 enum gameInputLayer { defaultView, politicalView, temperatureView, precipitationView };
-enum screenType { gameBoardScreen, dataScreen };
+enum screenType { gameBoardScreen, provinceDataScreen, worldDataScreen};
 enum colorCode {
 	unused, fogLandTile, waterTile, fogWaterTile, player1Minion,
 	player2Minion, player3Minion, player4Minion, player5Minion, player6Minion,
@@ -36,7 +36,8 @@ public:
 
 	//Province and status ///////////////////////////
 	int selectProvince(MasterBoard* boardToPrint);
-	int printDataScreen(MasterBoard* boardToPrint);
+	int printProvinceDataScreen(MasterBoard* boardToPrint);
+	int printWorldDataScreen(MasterBoard* boardToPrint);
 	int selectedProvince = 0;
 	//Province and status ///////////////////////////
 
