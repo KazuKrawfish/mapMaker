@@ -35,7 +35,6 @@ public:
 	int printSingleTile(int screenX, int screenY, int actualX, int actualY, MasterBoard* boardToPrint, bool withinAnimation);
 
 	//Province and status ///////////////////////////
-	int selectProvince(MasterBoard* boardToPrint);
 	int printProvinceDataScreen(MasterBoard* boardToPrint);
 	int printWorldDataScreen(MasterBoard* boardToPrint);
 	int selectedProvince = 0;

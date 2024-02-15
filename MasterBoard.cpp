@@ -54,23 +54,52 @@ int MasterBoard::clearBoard()
 }
 
 //Ensures cursor stays within the window.
-//Should work?
+//This doesn't account for full screen but we're not there yet
 int MasterBoard::checkWindow()
 {
+	sf::Vector2i mousePosition = sf::Mouse::getPosition(*myWindow);
+	int apparentTileX = (mousePosition.x) / TILE_SIZE;
+	int apparentTileY = (mousePosition.y) / TILE_SIZE;
 
-	//Incremental moves
-	/*sf::Vector2i mousePosition = sf::Mouse::getPosition(*myWindow);
-	if (mousePosition.x == (windowLocationX) && mousePosition.x != 0)						//If the cursor moves to the left edge of the window AND it's not at the edge of the board
-		windowLocationX--;																			//Shift the window left
-	if (mousePosition.x == (windowLocationX + WINDOW_WIDTH - 1) && (windowLocationX + WINDOW_WIDTH != BOARD_WIDTH))		//If the cursor moves to the right edge of the window AND it's not at the edge of the board
-		windowLocationX++;																																//Shift the window to the right
-	if (mousePosition.y == windowLocationY && mousePosition.y != 0)						//If the cursor moves to the top edge of the window AND it's not at the edge of the board
-		windowLocationY--;																//Shift the window up.
-	if ( mousePosition.y == (windowLocationY + WINDOW_HEIGHT - 1) && (windowLocationY + WINDOW_HEIGHT != BOARD_HEIGHT))				//If the cursor moves to the bottom of the window AND it's not at the bottom of the board
-		windowLocationY++;																														//Shift the window down once.
-		*/
+	//Move up to two tiles in both directions
+	for (int i = 0; i < 2; i++)
+	{
+		int trueTileX = apparentTileX + windowLocationX;
+		int trueTileY = apparentTileY + windowLocationY;
+
+		if (trueTileX == (windowLocationX) && windowLocationX != 0)						//If the cursor moves to the left edge of the window AND it's not at the edge of the board
+			windowLocationX--;																			//Shift the window left
+		if (trueTileX == (windowLocationX + WINDOW_WIDTH - 1) && (windowLocationX + WINDOW_WIDTH != BOARD_WIDTH))		//If the cursor moves to the right edge of the window AND it's not at the edge of the board
+			windowLocationX++;																																//Shift the window to the right
+		if (trueTileY == windowLocationY && windowLocationY != 0)						//If the cursor moves to the top edge of the window AND it's not at the edge of the board
+			windowLocationY--;																//Shift the window up.
+		if (trueTileY == (windowLocationY + WINDOW_HEIGHT - 1) && (windowLocationY + WINDOW_HEIGHT != BOARD_HEIGHT))				//If the cursor moves to the bottom of the window AND it's not at the bottom of the board
+			windowLocationY++;																														//Shift the window down once.
+	}
 
 	return 0;
+}
+
+int MasterBoard::selectProvince()
+{
+	sf::Vector2i mousePosition = sf::Mouse::getPosition(*myWindow);
+	int selectedProvince = 0;
+
+	//If mouse is within board
+	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < WINDOW_WIDTH * TILE_SIZE && mousePosition.y < WINDOW_HEIGHT * TILE_SIZE)
+	{
+		int apparentTileX = (mousePosition.x) / TILE_SIZE;
+		int apparentTileY = (mousePosition.y) / TILE_SIZE;
+
+		int trueTileX = apparentTileX + windowLocationX;
+		int trueTileY = apparentTileY + windowLocationY;
+
+		selectedProvince = Board[trueTileX][trueTileY].province;
+	}
+
+	//Must have selected an actual province - 0 means no one
+	return selectedProvince;
+
 }
 
 //Generates a map by creating a 2D normal distribution and adding to an random-walk-esque 2D heightmap, which provides some element of coherent noise. 
@@ -125,7 +154,7 @@ int MasterBoard::generateMap()
 
 	//SuperContinentWeight supports a large continent in the middle of the screen.
 	//Recommended between 3-5
-	int SuperContinentWeight = 5;
+	
 
 	// Use current time as seed for random generator
 	srand(time(0));
@@ -146,7 +175,7 @@ int MasterBoard::generateMap()
 
 
 	//Perform normal distro for outlying islands/random points.
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < numberOuterIslands; i++)
 	{
 		double centerX = rand() % BOARD_WIDTH;
 		double centerY = rand() % BOARD_HEIGHT;
@@ -172,6 +201,7 @@ int MasterBoard::generateMap()
 		{
 
 			normalArray[i][y] -= (meanX / 2 + meanY / 2);
+			//normalArray[i][y] -= (BOARD_WIDTH * BOARD_HEIGHT) / 100;
 
 		}
 		std::cout << std::endl;
@@ -571,19 +601,20 @@ int MasterBoard::generatePrecipAndTemp()
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
-			normalPrecipArray[x][y] -= (meanX / 2 + meanY / 2); //This is the "normalization" so the array doesn't JUST increase values
+			normalPrecipArray[x][y] -= ((meanX * meanY )/ 20); //This is the "normalization" so the array doesn't JUST increase values
 			Board[x][y].precipitation = 2 * normalPrecipArray[x][y];
 		}
 		std::cout << std::endl;
 	}
 
+	//Print out result for temp
 	for (int x = 0; x < BOARD_WIDTH; x++)
 	{
 		for (int y = 0; y < BOARD_HEIGHT; y++)
 		{
 
-			normalTempArray[x][y] -= (meanX / 2 + meanY / 2);	//This is the "normalization" so the array doesn't JUST increase values
-			Board[x][y].temperature = 3 * normalTempArray[x][y];
+			normalTempArray[x][y] -= ((meanX * meanY )/ absoluteTempFactor);	//This is the "normalization" so the array doesn't JUST increase values
+			Board[x][y].temperature = tempSlopeFactor * normalTempArray[x][y];
 		}
 		std::cout << std::endl;
 	}

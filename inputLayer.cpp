@@ -190,11 +190,14 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 
 	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * TILE_SIZE && mousePosition.y < boardToPrint->WINDOW_HEIGHT * TILE_SIZE)
 	{
+		int trueTileX = mousePosition.x / TILE_SIZE + boardToPrint->windowLocationX;
+		int trueTileY = mousePosition.y / TILE_SIZE + boardToPrint->windowLocationY;
+
 		std::string tileDescription;
 		char buffer[200];
 		//Description and Owner///////
-		int myController = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].controller;
-		int myProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
+		int myController = boardToPrint->Board[trueTileX][trueTileY].controller;
+		int myProvince = boardToPrint->Board[trueTileX][trueTileY].province;
 
 		std::string myControllerName = "Neutral";
 
@@ -216,7 +219,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Description and Owner//////
 
 		//ELEVATION//////////////////
-		int elevation = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].elevation;
+		int elevation = boardToPrint->Board[trueTileX][trueTileY].elevation;
 		snprintf(buffer, 200, "\nElevation: %d", elevation);
 		///	tileDescription += '\n';
 		//tileDescription += "Elevation: ";
@@ -224,14 +227,14 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//ELEVATION//////////////////
 
 		//Precip/Temp/Pop////////////////
-		int precip = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].precipitation;
-		int temp = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].temperature;
+		int precip = boardToPrint->Board[trueTileX][trueTileY].precipitation;
+		int temp = boardToPrint->Board[trueTileX][trueTileY].temperature;
 		int urbanPopulation = boardToPrint->listOfProvinces[myProvince].urbanPopulation;
 		int ruralPopulation = boardToPrint->listOfProvinces[myProvince].ruralPopulation;
 		int nationalPopulation = boardToPrint->listOfCountries[myController].nationalPopulation;
 		int maxUrbanPop = boardToPrint->listOfProvinces[myProvince].maxUrbanPopulation;
 		int maxRuralPop = boardToPrint->listOfProvinces[myProvince].maxRuralPopulation;
-		std::string terrainDescription = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].description;
+		std::string terrainDescription = boardToPrint->Board[trueTileX][trueTileY].description;
 		snprintf(buffer, 200, "\nTemperature: %d\nPrecipitation: %d\n%s", temp, precip, terrainDescription.c_str());
 		tileDescription += buffer;
 		if (myController != 0)		//Must be real country
@@ -313,24 +316,7 @@ int inputLayer::printScreen(MasterBoard* boardToPrint, bool withinAnimation)
 	return 0;
 }
 
-int inputLayer::selectProvince(MasterBoard* boardToPrint) 
-{
-	sf::Vector2i mousePosition = sf::Mouse::getPosition(*inputLayerWindow);
 
-	//If mouse is within board
-	if (mousePosition.x > 0 && mousePosition.y > 0 && mousePosition.x < boardToPrint->WINDOW_WIDTH * TILE_SIZE && mousePosition.y < boardToPrint->WINDOW_HEIGHT * TILE_SIZE)
-	{
-		//Description and Owner///////
-		selectedProvince = boardToPrint->Board[mousePosition.x / TILE_SIZE][mousePosition.y / TILE_SIZE].province;
-	}
-
-	//Must have selected an actual province
-	if (selectedProvince > 0)
-		return 0;
-	else return 1;
-
-
-}
 
 
 int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)

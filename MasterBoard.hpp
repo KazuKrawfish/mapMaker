@@ -25,7 +25,7 @@ const int MAX_WINDOW_HEIGHT = 14;
 const int MAX_WINDOW_WIDTH = 15;
 
 const int numberOfCountries = 10;
-const int numberOfProvinces = 20;
+const int numberOfProvinces = 20;		//30 for large
 
 const int TILE_SIZE = 50;
 
@@ -97,13 +97,35 @@ public:
 
 	//MAP GENERATION/////////////////
 
-	const int BOARD_WIDTH = 30;
-	const int BOARD_HEIGHT = 18;
 
 	const int WINDOW_HEIGHT = 18;
 	const int WINDOW_WIDTH = 30;
 
-	int checkWindow();
+	//SMALL
+	/*
+	const int BOARD_WIDTH = 30;	
+	const int BOARD_HEIGHT = 18; 
+	const int SuperContinentWeight = 3;
+	const int tempSlopeFactor = 3;
+	const int absoluteTempFactor = 15;
+	const int numberOuterIslands = 2;
+	*/
+
+	//LARGE
+	const int BOARD_WIDTH = 45;
+	const int BOARD_HEIGHT = 27;
+	const int SuperContinentWeight = 1;
+	const int tempSlopeFactor = 2;
+	const int absoluteTempFactor = 20;
+	const int numberOuterIslands = 2;
+
+
+
+
+	
+
+	int  checkWindow();
+	int selectProvince();
 	int clearBoard();
 
 

@@ -117,15 +117,21 @@ int mainMenu::playGame(MasterBoard* boardToPlay, inputLayer* InputLayer)
 				if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 				{
 					//select province and provide data screen
-					int successfulSelect = InputLayer->selectProvince(boardToPlay);
+					InputLayer->selectedProvince = boardToPlay->selectProvince();
 					
-					if (successfulSelect == 0)
+					if (InputLayer->selectedProvince != 0)
 						InputLayer->screen = provinceDataScreen;
 					else  InputLayer->screen = gameBoardScreen;
 				}
 
-				if(InputLayer->screen == gameBoardScreen)
-					boardToPlay->checkWindow();
+				if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+				{
+					if (InputLayer->screen == gameBoardScreen)
+					{
+						boardToPlay->checkWindow();
+					}
+						
+				}
 			}
 			else if (InputLayer->screen == provinceDataScreen || InputLayer->screen == worldDataScreen)
 			{
