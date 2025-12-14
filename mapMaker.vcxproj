@@ -138,7 +138,14 @@
     <ClInclude Include="mainmenu.h" />
     <ClInclude Include="MasterBoard.hpp" />
     <ClInclude Include="Province.hpp" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Tile.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="mapMaker.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="globe.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -339,6 +339,10 @@ int MasterBoard::generateMap()
 			listOfCountries[winnerCountry].listOfControlledProvinces.emplace_back(i);
 
 			*logStreamPointer << listOfCountries[winnerCountry].name << " takes control of " << listOfProvinces[i].name << std::endl;
+			char buffer[400];
+			snprintf(buffer, 400, "\n%s took control of %s.", listOfCountries[winnerCountry].name.c_str(), listOfProvinces[i].name.c_str());
+			listOfProvinces[i].provinceLog += buffer;
+
 
 			//Assign new controller to each tile in province.
 			for (int k = 0; k < listOfProvinces[i].listOfTiles.size(); k++)
@@ -358,7 +362,7 @@ int MasterBoard::generateMap()
 
 	generatePrecipAndTemp();
 
-	myfile.close();\
+	myfile.close();
 	return 0;
 }
 
@@ -750,9 +754,11 @@ int MasterBoard::initializeProvinceWealth(int input)
 
 int MasterBoard::advanceTurn()
 {
-	*logStreamPointer << "Turn " << gameTurn << std::endl;
+	*logStreamPointer << std::endl << std::endl;
 	*logStreamPointer << "*****************" << std::endl;
-	*logStreamPointer << "*****************" << std::endl<<std::endl<<std::endl;
+	*logStreamPointer << "*****************" << std::endl << std::endl << std::endl;
+	*logStreamPointer << "Turn " << gameTurn << std::endl;
+
 
 	updateAllCountriesDiplo();
 	updateAllCountriesTrade();
@@ -1025,8 +1031,8 @@ int MasterBoard::updateCountryTrade(int input)
 			int chance = rand() % 100;
 			if (myCountry != &listOfCountries[i])
 			{
-				*logStreamPointer << myCountry->name << "Trade roll: " << chance << std::endl;
-				if (chance > 95) //5% chance of making agreement
+				*logStreamPointer << myCountry->name << " Trade roll: " << chance << std::endl;
+				if (chance > 80) //20% chance of making agreement
 				{
 					//Check if we already have a trade agreement with a given country.
 					std::vector<int>::iterator foundCountry;
@@ -1042,10 +1048,22 @@ int MasterBoard::updateCountryTrade(int input)
 						addTradeRoutes(input, i);
 
 						*logStreamPointer << myCountry->name << " made a trade agreement with " << listOfCountries[i].name << std::endl;
+						char buffer[400];
+						for (int x = 0 ; x < myCountry->listOfControlledProvinces.size();x++)
+						{
+							snprintf(buffer, 400, "\nOur nation, %s made a trade agreement with %s.", myCountry->name.c_str(), listOfCountries[i].name.c_str());
+							listOfProvinces.at(myCountry->listOfControlledProvinces.at(x)).provinceLog += buffer;
+						}
+						//Do the same for provinces of the partner country
+						for (int x = 0; x < listOfCountries[i].listOfControlledProvinces.size(); x++)
+						{
+							snprintf(buffer, 400, "\nOur nation, %s made a trade agreement with %s.", listOfCountries[i].name.c_str(), myCountry->name.c_str());
+							listOfProvinces.at(listOfCountries[i].listOfControlledProvinces.at(x)).provinceLog += buffer;
+						}
 					}
 				}
 				else
-					if (chance < 2) //2% chance of breaking agreement
+					if (chance < 20) //20% chance of breaking agreement
 					{
 						//Verify if we already have a trade agreement with the country before we try to break.
 						std::vector<int>::iterator foundCountry;
@@ -1061,7 +1079,19 @@ int MasterBoard::updateCountryTrade(int input)
 							//Then break trade routes for individual provinces in both countries.
 							breakTradeRoutes(input, i);
 
-							*logStreamPointer << myCountry->name << " broke their trade agreement with " << listOfCountries[i].name << std::endl;
+							*logStreamPointer << myCountry->name << " broke its trade agreement with " << listOfCountries[i].name << std::endl;
+							char buffer[400];
+							for (int x = 0;x < myCountry->listOfControlledProvinces.size(); x++)
+							{
+								snprintf(buffer, 400, "\nOur nation, %s broke its trade agreement with %s.", myCountry->name.c_str(), listOfCountries[i].name.c_str());
+								listOfProvinces.at(myCountry->listOfControlledProvinces.at(x)).provinceLog += buffer;
+							}
+							//Do the same for provinces of the partner country
+							for (int x = 0; x < listOfCountries[i].listOfControlledProvinces.size(); x++)
+							{
+								snprintf(buffer, 400, "\nOur nation, %s broke its trade agreement with %s.", listOfCountries[i].name.c_str(), myCountry->name.c_str());
+								listOfProvinces.at(listOfCountries[i].listOfControlledProvinces.at(x)).provinceLog += buffer;
+							}
 						}
 					}
 			}
@@ -1198,6 +1228,9 @@ int MasterBoard::updateProvinceTechLevel(int inputProvince)
 		{
 			provToUpdate->provinceTechLevel = techLevel(provToUpdate->provinceTechLevel + 1);
 			*logStreamPointer << provToUpdate->name << " advanced to tech level: " << provToUpdate->provinceTechLevel << std::endl;
+			char buffer[400];
+			snprintf(buffer, 400, "\n%s advanced to tech level %d.", provToUpdate->name, provToUpdate->provinceTechLevel);
+			provToUpdate->provinceLog += buffer;
 
 			//If province advances tech level, update the max population for rural.
 			//Urban max is based on CURRENT rural, so no update.

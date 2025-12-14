@@ -213,14 +213,14 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		{
 			nameOfProvince = boardToPrint->listOfProvinces[myProvince].name;
 
-			snprintf(buffer, 200, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
+			snprintf(buffer, 200, "%s Province (%d)\nNation: %s (%d)", nameOfProvince.c_str(), myProvince, myControllerName.c_str(), myController);
 			tileDescription += buffer;
 		}
 		//Description and Owner//////
 
 		//ELEVATION//////////////////
 		int elevation = boardToPrint->Board[trueTileX][trueTileY].elevation;
-		snprintf(buffer, 200, "\nElevation: %d", elevation);
+		snprintf(buffer, 200, "\n\nElevation: %d", elevation);
 		///	tileDescription += '\n';
 		//tileDescription += "Elevation: ";
 		tileDescription += buffer;
@@ -239,7 +239,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		tileDescription += buffer;
 		if (myController != 0)		//Must be real country
 		{		
-			snprintf(buffer, 200, "\nRural Population(Max):\n%d\n(%d)\nUrban Population(Max): \n%d\n(%d)\nNational Population : \n%d", ruralPopulation, maxRuralPop, urbanPopulation, maxUrbanPop, nationalPopulation);
+			snprintf(buffer, 200, "\n\nRural Population (Max):\n%d\n(%d)\n\nUrban Population (Max): \n%d\n(%d)\n\nNational Population: \n%d", ruralPopulation, maxRuralPop, urbanPopulation, maxUrbanPop, nationalPopulation);
 			tileDescription += buffer;
 		}
 		//Precip/Temp////////////////
@@ -247,7 +247,7 @@ int inputLayer::printStatus(MasterBoard* boardToPrint)
 		//Other turn data
 		if (myController != 0)		//Must be real country
 		{
-			snprintf(buffer, 200, "\nTech Level: %d\nTech Group: %s", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel), boardToPrint->listOfCountries[myController].techGroupNames[myTechGroup].c_str());
+			snprintf(buffer, 200, "\n\nTech Level: %d\nTech Group: %s", int(boardToPrint->listOfProvinces[myProvince].provinceTechLevel), boardToPrint->listOfCountries[myController].techGroupNames[myTechGroup].c_str());
 			tileDescription += buffer;
 		}
 		snprintf(buffer, 200, "\nTurn: %d\n",  boardToPrint->gameTurn);
@@ -334,7 +334,7 @@ int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 		nameOfProvince = boardToPrint->listOfProvinces[selectedProvince].name;
 
 	char buffer[400];
-	snprintf(buffer, 400, "%s Province(%d)\n%s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
+	snprintf(buffer, 400, "%s Province(%d)\nNation: %s(%d)", nameOfProvince.c_str(), selectedProvince, myControllerName.c_str(), myController);
 	provinceDescription += buffer;
 
 
@@ -362,7 +362,7 @@ int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 	int totalWealthGrowth = (urbanWealth * urbanWealthGrowthRate + boardToPrint->listOfProvinces[selectedProvince].ruralWealth * ruralGrowthRate) / totalWealth;
 
 	//Print out rural pop growth and modifiers related
-	snprintf(buffer, 400, "\nRural Population:\n%d\nRural Pop Growth: %d ", ruralPopulation, ruralGrowthRate);
+	snprintf(buffer, 400, "\n\nRural Population: %d\nRural Pop Growth: %d ", ruralPopulation, ruralGrowthRate);
 	provinceDescription += buffer;
 	for (int i = 0; i < 2 ; i++)
 	{
@@ -371,10 +371,10 @@ int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 			int(boardToPrint->listOfProvinces[selectedProvince].listOfRuralPopGrowthModifiers[i].GrowthModiferValue));
 		provinceDescription += buffer;
 	}
-	provinceDescription += "\n";
+	provinceDescription += "\n\n";
 		
 	//Print out urban pop growth and modifiers related
-	snprintf(buffer, 400, "Urban Population:\n%d\nUrban Pop Growth: %d", urbanPopulation, urbanGrowthRate);
+	snprintf(buffer, 400, "Urban Population: %d\nUrban Pop Growth: %d", urbanPopulation, urbanGrowthRate);
 	provinceDescription += buffer;
 	for (int i = 0; i < 4; i++)
 	{
@@ -385,7 +385,7 @@ int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 	}
 
 	//Print out urban wealth growth and modifiers
-	snprintf(buffer, 400, "\nNational Population:\n%d\nUrban Wealth:\n%d\nUrban Wealth Growth: %d ", nationalPopulation, urbanWealth, urbanWealthGrowthRate);
+	snprintf(buffer, 400, "\n\nNational Population:%d\nUrban Wealth: %d\nUrban Wealth Growth: %d ", nationalPopulation, urbanWealth, urbanWealthGrowthRate);
 	provinceDescription += buffer;
 	for (int i = 0; i < 4; i++)
 	{
@@ -395,24 +395,45 @@ int inputLayer::printProvinceDataScreen(MasterBoard* boardToPrint)
 		provinceDescription += buffer;
 	}
 
+
+	provinceDescription += "\n\nTrading with the following provinces:";
 	//Report trade status based on provinces
 	for (int i = 0; i < boardToPrint->listOfProvinces[selectedProvince].tradeRoutes.size(); i++)
 	{
 		int provinceTradingWith = boardToPrint->listOfProvinces[selectedProvince].tradeRoutes[i];
-		snprintf(buffer, 400, "\nTrading with %s\(%s\)", boardToPrint->listOfProvinces[provinceTradingWith].name.c_str(), boardToPrint->listOfCountries[boardToPrint->listOfProvinces[provinceTradingWith].controller].name.c_str());
+		snprintf(buffer, 400, "\n%s\(%s\)", boardToPrint->listOfProvinces[provinceTradingWith].name.c_str(), boardToPrint->listOfCountries[boardToPrint->listOfProvinces[provinceTradingWith].controller].name.c_str());
 		provinceDescription += buffer;
 	}
+	provinceDescription += "\n\nTrade partner nations:";
 	for (int i = 0; i <	boardToPrint->listOfCountries[myController].tradeAgreements.size()  ; i++)
 	{
 		int countryTradingWith = boardToPrint->listOfCountries[myController].tradeAgreements[i];
-		snprintf(buffer, 400, "\n%s is trading with country %s", myControllerName.c_str(), boardToPrint->listOfCountries [countryTradingWith].name.c_str()  );
+		snprintf(buffer, 400, "\n%s", boardToPrint->listOfCountries [countryTradingWith].name.c_str()  );
 		provinceDescription += buffer;
 	}
+
+	//Other important data
+	if (myController != 0)		//Must be real country
+	{
+		int myTechGroup = int(boardToPrint->listOfCountries[myController].nationalTechGroup);
+		snprintf(buffer, 200, "\n\nTech Level: %d\nTech Group: %s", int(boardToPrint->listOfProvinces[selectedProvince].provinceTechLevel), boardToPrint->listOfCountries[myController].techGroupNames[myTechGroup].c_str());
+		provinceDescription += buffer;
+	}
+	snprintf(buffer, 200, "\nTurn: %d\n", boardToPrint->gameTurn);
+	provinceDescription += buffer;
 
 	sf::Text newText(provinceDescription, *inputLayerFont, MainMenu->menuTextSize);
 
 	newText.setPosition(10, 10);
 	inputLayerWindow->draw(newText);
+
+	//Then print log on right hand side
+	std::string newDescription = "Last Turn:\n";
+	newDescription += boardToPrint->listOfProvinces[selectedProvince].provinceLog;
+
+	sf::Text secondText(newDescription, *inputLayerFont, MainMenu->menuTextSize);
+	secondText.setPosition(1000, 10);
+	inputLayerWindow->draw(secondText);
 
 	return 0;
 }

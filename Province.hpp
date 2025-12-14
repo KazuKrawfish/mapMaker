@@ -101,6 +101,8 @@ public:
 	
 	std::string name;
 	int controller = 0;
+
+	std::string provinceLog;
 	
 	std::vector <xyCoord> listOfTiles;
 
